@@ -49,7 +49,7 @@ namespace Moxy.Interface
 			{
 				Name = "Harbing",
 				Level = 4,
-				Class = "Mage",
+				Class = "Apprentice",
 				Texture = Moxy.ContentManager.Load<Texture2D> ("Interface//cf_apprentice")
 			});
 

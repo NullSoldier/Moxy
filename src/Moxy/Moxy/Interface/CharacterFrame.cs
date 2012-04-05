@@ -127,6 +127,10 @@ namespace Moxy.Interface
 				{
 					frameState = FrameState.DisplayCreateCharacter;
 				}
+				else if (Moxy.WasPadButtonPressed (PlayerIndex, Buttons.A))
+				{
+					frameState = FrameState.Ready;
+				}
 
 				if (selectNew)
 					charInfo = CharacterHolder.GetCharacterSlot (characterSlot);
@@ -156,6 +160,11 @@ namespace Moxy.Interface
 				{
 					classSlot = Helpers.GetLoopableInt (--classSlot, 0, CharacterHolder.ClassCount - 1);
 					selectNew = true;
+				}
+				else if (Moxy.WasPadButtonPressed (PlayerIndex, Buttons.B))
+				{
+					// Go back to new screen
+					frameState = FrameState.SelectCharacter;
 				}
 				else if (Moxy.WasPadButtonPressed (PlayerIndex, Buttons.A))
 				{
