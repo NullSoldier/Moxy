@@ -112,12 +112,14 @@
     <Compile Include="DynamicCamera.cs" />
     <Compile Include="Entities\AngryRock.cs" />
     <Compile Include="Entities\Animation.cs" />
+    <Compile Include="Entities\ArcanaPlayer.cs" />
     <Compile Include="Entities\BigBadBoss.cs" />
     <Compile Include="Entities\Demon.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EyeBall.cs" />
     <Compile Include="Entities\Gunner.cs" />
     <Compile Include="Entities\Item.cs" />
+    <Compile Include="Entities\Mage.cs" />
     <Compile Include="Entities\Monster.cs" />
     <Compile Include="Entities\MonsterSpawner.cs" />
     <Compile Include="Entities\MonsterSpawnerOptions.cs" />
@@ -142,7 +144,7 @@
     <Compile Include="GameStates\UIOverlay.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Interface\CharacterFrame.cs" />
-    <Compile Include="Interface\ControllerSelecter.cs" />
+    <Compile Include="Interface\CharacterHolder.cs" />
     <Compile Include="Levels\BaseLevel.cs" />
     <Compile Include="Levels\LevelFive.cs" />
     <Compile Include="Levels\LevelFour.cs" />

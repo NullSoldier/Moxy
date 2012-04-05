@@ -61,7 +61,7 @@ namespace Moxy.GameStates
 		{
 			MediaPlayer.Volume = 0f;
 			MediaPlayer.IsRepeating = true;
-			MediaPlayer.Play (music);
+			//MediaPlayer.Play (music);
 		}
 
 		public override void OnLostFocus()

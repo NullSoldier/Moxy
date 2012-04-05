@@ -11,6 +11,7 @@ namespace Moxy
 		Generator,
 		Slime,
 		EyeBall,
-		Demon
+		Demon,
+		Mage
 	}
 }

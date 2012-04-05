@@ -123,5 +123,10 @@ namespace Moxy
 
 			base.Draw(gameTime);
 		}
+
+		public static bool WasPadButtonPressed (PlayerIndex index, Buttons button)
+		{
+			return CurrentPadStates[index].IsButtonDown (button) && LastPadStates[index].IsButtonUp (button);
+		}
 	}
 }

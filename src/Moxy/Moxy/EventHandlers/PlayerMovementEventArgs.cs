@@ -10,9 +10,9 @@ namespace Moxy.EventHandlers
 	public class PlayerMovementEventArgs
 		: EventArgs
 	{
-		public Vector2 NewLocation;
 		public Vector2 CurrentLocation;
-		public Player Player;
+		public Vector2 NewLocation;
+		public ArcanaPlayer Player;
 		public bool Handled;
 	}
 }

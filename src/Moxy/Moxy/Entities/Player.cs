@@ -80,7 +80,7 @@ namespace Moxy.Entities
 
 			CollisionCenter = Location;
 			Collision = new Rectangle((int)CollisionCenter.X, (int)CollisionCenter.Y, 1, 1);
-			CollisionRadius = 32f;
+			CollisionRadius = 32;
 			Collision.Inflate((int)CollisionRadius, (int)CollisionRadius);
 		}
 
@@ -114,7 +114,7 @@ namespace Moxy.Entities
 			{
 				NewLocation = this.Location + moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds,
 				Handled = false,
-				Player = this,
+				//Player = this,
 				CurrentLocation = this.Location
 			};
 

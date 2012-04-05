@@ -233,7 +233,7 @@ namespace Moxy.GameStates
 			{
 				Reset ();
 				LoadMap();
-				LoadPlayers();
+				//LoadPlayers();
 				LoadNextLevel ();
 				characterSelectState.CharactersSelected = false;
 			}
@@ -390,7 +390,7 @@ namespace Moxy.GameStates
 			//TODO: Add blue removable here
 		}
 
-		private void LoadPlayers()
+		/*private void LoadPlayers()
 		{
 			float gunnerSpeed = 0.2f;//0.1f;
 			float enchanterSpeed = 0.3f;
@@ -498,7 +498,7 @@ namespace Moxy.GameStates
 			}
 
 			uiOverlay.ActivePlayers = players;
-		}
+		}*/
 
 
 		private PlayerIndex GenerateAIIndex()
@@ -523,26 +523,10 @@ namespace Moxy.GameStates
 			//Moxy.StateManager.Pop();
 		}
 
-		void Player_OnMovement(object sender, EventHandlers.PlayerMovementEventArgs e)
+		private void Player_OnMovement (object sender, PlayerMovementEventArgs e)
 		{
-			var distance = 0f;
-			switch (e.Player.EntityType)
-			{
-				case EntityType.Generator:
-					var gen = (PowerGenerator)e.Player;
-					distance = Vector2.Distance(e.NewLocation, gen.Gunner.Location);
-					break;
-				case EntityType.Gunner:
-					var gun = (Gunner)e.Player;
-					distance = Vector2.Distance(e.NewLocation, gun.Generator.Location);
-					break;
-			}
-
-			if (distance > MaxPlayerDistance)
-			{
-				e.Handled = true;
-				e.NewLocation = e.CurrentLocation;
-			}
+			// TODO: Add distance limiting
+			// TODO: Add collision here
 		}
 
 		private void LoadMap()
