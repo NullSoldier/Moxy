@@ -9,19 +9,16 @@ namespace Moxy.Entities
 	public class ArcanaPlayer
 		: Entity
 	{
-		public int Level
-		{
-			get { return level; }
-			set
-			{
-				level = value;
-				SetAnimation (animation);
-			}
-		}
-
 		public event EventHandler OnDeath;
 		public event EventHandler<PlayerMovementEventArgs> OnMovement;
 
+		// Character attributes
+		public int CharacterID;
+		public string Name;
+		public string Class;
+		public int Level;
+
+		// Character state
 		public PlayerIndex PadIndex;
 		public float PlayerScore;
 		public Color Color;
@@ -55,6 +52,9 @@ namespace Moxy.Entities
 
 			Light.Location = Location + new Vector2 (32, 32);
 			Collision = Helpers.CreateCenteredRectangle (Location, CollisionRadius, CollisionRadius);
+
+			if (needUpdateAnimation)
+				SetAnimation (animation);
 		}
 
 		public override void Draw (SpriteBatch batch)
@@ -113,6 +113,7 @@ namespace Moxy.Entities
 		protected float defense;
 		protected string animation;
 		private Vector2 lastMovement;
+		protected bool needUpdateAnimation;
 
 		private void SetAnimation (string animation)
 		{

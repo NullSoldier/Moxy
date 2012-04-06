@@ -38,6 +38,8 @@ namespace Moxy.GameStates
 
 			if (allReady && Moxy.WasPadButtonPressed (PlayerIndex.One, Buttons.Start))
 			{
+				Players = frames.Select (f => f.Character).ToList();
+
 				CharactersSelected = true;
 				Moxy.StateManager.Set ("Game");
 			}

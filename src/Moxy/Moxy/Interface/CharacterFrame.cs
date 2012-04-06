@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Moxy.Entities;
 using Moxy.GameStates;
 
 namespace Moxy.Interface
@@ -29,6 +30,7 @@ namespace Moxy.Interface
 
 		public PlayerIndex PlayerIndex;
 		public CharacterHolder CharacterHolder;
+		public ArcanaPlayer Character;
 		public Vector2 Location;
 		public Rectangle Framebounds;
 		public Vector2 checkOrigin;
@@ -129,6 +131,8 @@ namespace Moxy.Interface
 				}
 				else if (Moxy.WasPadButtonPressed (PlayerIndex, Buttons.A))
 				{
+					Character = charInfo.Player;
+					IsReady = true;
 					frameState = FrameState.Ready;
 				}
 
@@ -168,13 +172,11 @@ namespace Moxy.Interface
 				}
 				else if (Moxy.WasPadButtonPressed (PlayerIndex, Buttons.A))
 				{
-					CharacterHolder.Characters.Add (new CharacterInformation
+					CharacterHolder.Characters.Add (new CharacterInformation (new ArcanaPlayer
 					{
 						Name = "No Name",
-						Level = 1,
 						Class = classInfo.Class,
-						Texture = classInfo.Texture
-					});
+					}));
 
 					// Select our newly created character
 					charInfo = CharacterHolder.GetCharacterSlot (characterSlot = CharacterHolder.Count - 1);
