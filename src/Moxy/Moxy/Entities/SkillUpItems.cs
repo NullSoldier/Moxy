@@ -19,14 +19,8 @@ namespace Moxy.Entities
 			Light.Color.A = 60;
 		}
 
-		public override bool OnPlayerCollision(Player p)
+		public override bool OnPlayerCollision(ArcanaPlayer p)
 		{
-			var gen = p as PowerGenerator;
-			if (gen == null)
-				return false;
-
-			Moxy.ContentManager.Load<SoundEffect> ("Sounds\\PowerupPickup").Play ();
-			gen.ApplyPowerup(this);
 			return true;
 		}
 	}
@@ -43,14 +37,9 @@ namespace Moxy.Entities
 			Light.Color.A = 60;
 		}
 
-		public override bool OnPlayerCollision(Player p)
+		public override bool OnPlayerCollision(ArcanaPlayer p)
 		{
-			var gen = p as PowerGenerator;
-			if (gen == null)
-				return false;
-
-			Moxy.ContentManager.Load<SoundEffect> ("Sounds\\PowerupPickup").Play ();
-			gen.ApplyPowerup(this);
+			//gen.ApplyPowerup(this);
 			return true;
 		}
 	}
@@ -67,14 +56,9 @@ namespace Moxy.Entities
 			Light.Color.A = 60;
 		}
 
-		public override bool OnPlayerCollision(Player p)
+		public override bool OnPlayerCollision(ArcanaPlayer p)
 		{
-			var gen = p as PowerGenerator;
-			if (gen == null)
-				return false;
-
-			Moxy.ContentManager.Load<SoundEffect> ("Sounds\\PowerupPickup").Play ();
-			gen.ApplyPowerup(this);
+			//gen.ApplyPowerup(this);
 			return true;
 		}
 	}
@@ -91,14 +75,9 @@ namespace Moxy.Entities
 			Light.Color.A = 60;
 		}
 
-		public override bool OnPlayerCollision(Player p)
+		public override bool OnPlayerCollision(ArcanaPlayer p)
 		{
-			var gen = p as PowerGenerator;
-			if (gen == null)
-				return false;
-
-			Moxy.ContentManager.Load<SoundEffect> ("Sounds\\PowerupPickup").Play ();
-			gen.ApplyPowerup(this);
+			//gen.ApplyPowerup(this);
 			return true;
 		}
 	}
@@ -112,7 +91,7 @@ namespace Moxy.Entities
 			ItemID = ItemID.HealthPowerup;
 		}
 
-		public override bool OnPlayerCollision(Player p)
+		public override bool OnPlayerCollision(ArcanaPlayer p)
 		{
 			p.Health += 50;
 			return true;
@@ -128,13 +107,9 @@ namespace Moxy.Entities
 			ItemID = ItemID.ManaPowerup;
 		}
 
-		public override bool OnPlayerCollision(Player p)
+		public override bool OnPlayerCollision (ArcanaPlayer p)
 		{
-			var gun = p as Gunner;
-			if (gun == null)
-				return false;
-
-			gun.Energy += 20;
+			//TODO: Add some effect
 			return true;
 		}
 	}

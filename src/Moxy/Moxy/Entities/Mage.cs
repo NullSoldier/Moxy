@@ -21,29 +21,19 @@ namespace Moxy.Entities
 			EntityType = EntityType.Mage;
 			Animations.SetAnimation("Walk_1");
 			
-			Health = 100;
-			MaxHealth = 100;
-			Mana = 500;
-			MaxMana = 500;
-		}
+			fireballEmitter = new FireballEmitter ();
+			fireballEmitter.ParticleTexture = Moxy.ContentManager.Load<Texture2D> ("Fireball");
+			fireballEmitter.OnParticleMonsterCollision += fireballEmitter_OnParticleMonsterCollision;
+			ParticleManagers.Add (fireballEmitter);
 
-		public FireballEmitter FireballEmitter
-		{
-			get { return fireballEmitter; }
-			set
-			{
-				fireballEmitter.OnParticleMonsterCollision += fireballEmitter_OnParticleMonsterCollision;
-				fireballEmitter = value;
-			}
+			Health = MaxHealth = 100;
+			Energy = MaxEnergy = 500;
 		}
-
-		public SoundEffect fireSound;
-		public float Mana;
-		public float MaxMana;
 
 		public override void Update (GameTime gameTime)
 		{
 			HandleInput(gameTime);
+			fireballEmitter.Update (gameTime);
 
 			base.Update(gameTime);
 		}
@@ -54,7 +44,7 @@ namespace Moxy.Entities
 
 			AttackTimeElapsed += gameTime.ElapsedGameTime;
 
-			if (currentPadState.ThumbSticks.Right != Vector2.Zero && AttackTimeElapsed > AttackCooldown && Mana >= 10)
+			if (currentPadState.ThumbSticks.Right != Vector2.Zero && AttackTimeElapsed > AttackCooldown && Energy >= 10)
 			{
 				var lookVector = Vector2.Normalize(currentPadState.ThumbSticks.Right);
 				lookVector.Y = -lookVector.Y;
@@ -71,8 +61,8 @@ namespace Moxy.Entities
 			var fireVolume = MathHelper.Lerp ((float)Moxy.Random.NextDouble (), 0.7f, 0.8f);
 			fireSound.Play (fireVolume, firePitch, 0f);
 
-			fireballEmitter.GenerateParticles (gameTime, lookVector);
-			Mana -= 10;
+			fireballEmitter.GenerateParticles (gameTime, this, lookVector);
+			Energy -= 10;
 		}
 
 		private void fireballEmitter_OnParticleMonsterCollision (object sender, Events.GenericEventArgs<Monster> e)
@@ -81,6 +71,7 @@ namespace Moxy.Entities
 		}
 
 		private FireballEmitter fireballEmitter;
+		private SoundEffect fireSound;
 		private TimeSpan AttackTimeElapsed;
 		private TimeSpan AttackCooldown = new TimeSpan(0, 0, 0, 0, 500);
 		private float FireballDamage = 10f;
@@ -132,6 +123,7 @@ namespace Moxy.Entities
 				}, new TimeSpan(0, 0, 0, 0, 200))
 
 			});
+
 			fireSound = Moxy.ContentManager.Load<SoundEffect> ("Sounds//Fire");
 		}
 	}

@@ -36,7 +36,7 @@ namespace Moxy.GameStates
 					allReady = false;
 			}
 
-			if (allReady && Moxy.WasPadButtonPressed (PlayerIndex.One, Buttons.Start))
+			if (allReady && (Moxy.WasPadButtonPressed (PlayerIndex.One, Buttons.Start) || Moxy.WasPadButtonPressed (PlayerIndex.One, Buttons.A)))
 			{
 				Players = frames.Where(f => f.IsReady).Select (f => f.Character).ToList();
 

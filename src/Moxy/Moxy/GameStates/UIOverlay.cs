@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Moxy.GameStates;
 using Moxy.Interface;
-using Moxy.Skills;
 using Microsoft.Xna.Framework.Input;
 
 namespace Moxy.GameStates
@@ -34,12 +33,6 @@ namespace Moxy.GameStates
 				SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
 
 			playerInfo.Draw(batch);
-#if DEBUG_COLLISION
-			var old = activeGameState.players[0].Collision;
-			var start = activeGameState.camera.WorldToScreen(new Vector2(old.X, old.Y));
-			var toScreen = new Rectangle((int) start.X, (int) start.Y, old.Width, old.Height);
-			batch.Draw(pixel, toScreen, Color.White);
-#endif
 			batch.End();
 		}
 

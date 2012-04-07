@@ -25,6 +25,7 @@ namespace Moxy.Entities
 		public float LowSpeed;
 		public float HighSpeed;
 		public int ScoreGiven;
+		public float Health;
 
 		public void CheckCollide(ArcanaPlayer player)
 		{

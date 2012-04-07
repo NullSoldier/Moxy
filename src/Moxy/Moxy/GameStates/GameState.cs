@@ -25,13 +25,11 @@ namespace Moxy.GameStates
 			lights = new List<Light>();
 			monsters = new List<Monster>();
 			items = new List<Item> ();
+			particleManagers = new List<ParticleManager>();
 
 			// Utility queues
 			monsterPurgeQueue = new Queue<Monster> ();
 			itemPurgeQueue = new Queue<Item> ();
-
-			FireballEmitter = new FireballEmitter ();
-			FireballEmitter.OnParticleMonsterCollision += OnBulletCollision;
 		}
 
 		public override void Update(GameTime gameTime)
@@ -43,26 +41,28 @@ namespace Moxy.GameStates
 			map.Update (gameTime);
 
 			foreach (var player in players)
-			{
 				player.Update (gameTime);
-			}
 
 			if (!InbetweenRounds)
 			{
-				foreach (var item in items)
+				foreach (Item item in items)
 				{
 					item.Update (gameTime);
+
+					foreach (ArcanaPlayer player in players)
+						item.CheckCollide (player);
 				}
 
 				// Clear out items
 				while (itemPurgeQueue.Count > 0)
 					items.Remove (itemPurgeQueue.Dequeue());
 
-				foreach (var monster in monsters)
+				foreach (Monster monster in monsters)
 				{
 					monster.Update (gameTime);
 					
-					FireballEmitter.CheckCollision (monster);
+					foreach (ProjectileEmitter particleManager in particleManagers)
+						particleManager.CheckCollision (monster);
 
 					foreach (ArcanaPlayer player in players)
 						monster.CheckCollide (player);
@@ -117,7 +117,6 @@ namespace Moxy.GameStates
 
 			//GenerateEnergy (gameTime);
 			FindMonsterTargets (gameTime);
-			FireballEmitter.Update(gameTime);
 
 			// Should we fade the lights?
 			if (fadingLight)
@@ -152,7 +151,7 @@ namespace Moxy.GameStates
 			monsterPurgeQueue.Enqueue (monster);
 
 			//TODO: Make it get experience for the right team
-			Team1Score += monster.ScoreGiven;
+			players[0].Experience += monster.ScoreGiven;
 
 			var item = monster.DropItem();
 			if (item != null)
@@ -163,14 +162,15 @@ namespace Moxy.GameStates
 			}
 		}
 
-		public void item_OnPickup(object sender, GenericEventArgs<Player> e)
+		public void item_OnPickup(object sender, GenericEventArgs<ArcanaPlayer> e)
 		{
-			var item = sender as Item;
-			if (item != null)
-			{
-				item.OnPickup -= item_OnPickup;
-				itemPurgeQueue.Enqueue (item);
-			}
+			Item item = sender as Item;
+
+			e.Data.Experience += 10;
+			item.OnPickup -= item_OnPickup;
+			itemPurgeQueue.Enqueue (item);
+
+			Moxy.ContentManager.Load<SoundEffect> ("Sounds\\PowerupPickup").Play ();
 		}
 
 		public override void Draw(SpriteBatch batch)
@@ -201,12 +201,9 @@ namespace Moxy.GameStates
 			lightingEffect = Moxy.ContentManager.Load<Effect> ("lighting");
 			lightTexture = Moxy.ContentManager.Load<Texture2D> ("light");
 			radiusTexture = Moxy.ContentManager.Load<Texture2D> ("Radius");
-			particleTexture = Moxy.ContentManager.Load<Texture2D> ("powerparticle");
 
 			waveDoneSound = Moxy.ContentManager.Load<SoundEffect> ("Sounds\\waveComplete");
 			levelUpSound = Moxy.ContentManager.Load<SoundEffect> ("Sounds\\LevelUp");
-
-			radiusOrigin = new Vector2 (radiusTexture.Width / 2, radiusTexture.Height / 2);
 
 			uiOverlay = (UIOverlay)Moxy.StateManager["UIOverlay"];
 			characterSelectState = (CharacterSelectState)Moxy.StateManager["CharacterSelect"];
@@ -241,45 +238,38 @@ namespace Moxy.GameStates
 			Moxy.StateManager.Push(uiOverlay);
 		}
 
-		public BigBadBoss boss;
-		private float MaxPlayerDistance = 1000;
-		private FireballEmitter FireballEmitter;
 		public List<ArcanaPlayer> players;
+		public BigBadBoss boss;
+		public BaseLevel Level;
 		public DynamicCamera camera;
 		public MapRoot map;
+		public bool InbetweenRounds = true;
+		public DateTime StartLevelTime;
+
+		private float MaxPlayerDistance = 1000;
 		private Texture2D lightTexture;
 		private Texture2D texture;
 		private Texture2D radiusTexture;
-		private Texture2D particleTexture;
+		private SoundEffect waveDoneSound;
+		private SoundEffect levelUpSound;
 		private List<Light> lights;
 		private List<Item> items;
 		private List<Monster> monsters;
+		private List<ParticleManager> particleManagers;
 		private Queue<Item> itemPurgeQueue;
 		private Queue<Monster> monsterPurgeQueue;
 		private RenderTarget2D gameTarget;
 		private RenderTarget2D lightTarget;
 		private Effect lightingEffect;
-		private Vector2 radiusOrigin;
-		private EnergyPacketEmitter redPacketEmitter;
 		private UIOverlay uiOverlay;
 		private CharacterSelectState characterSelectState;
-		private MonsterSpawner lastWinner;
-		private Random random;
 		private int monsterCount;
-		public BaseLevel Level;
 		private float spawnPassed;
-		private bool isLoaded;
 		private Timer gamePauseTimer;
-		public bool InbetweenRounds = true;
-		public DateTime StartLevelTime;
-		private int timeBetweenRounds = 1;
-		private SoundEffect waveDoneSound;
-		private SoundEffect levelUpSound;
-		public int Team1Score;
-		public int Team2Score;
+		private int timeBetweenRounds = 3;
 		public int[] ExperienceTable;
-		private int lastAIID = 6;
 		private int playersDead = 0;
+		private bool isLoaded;
 
 		private bool fadingLight;
 		private Color startFadeColor;
@@ -294,14 +284,10 @@ namespace Moxy.GameStates
 			batch.Begin (SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None,
 				RasterizerState.CullCounterClockwise, null, camera.GetTransformation (Moxy.Graphics));
 
-
 			map.Draw(batch);
 
-			//if (boss == null)
-			{
-				foreach (ArcanaPlayer player in players)
-					player.Draw(batch, camera.ViewFrustrum);
-			}
+			foreach (ArcanaPlayer player in players)
+				player.Draw(batch, camera.ViewFrustrum);
 
 			foreach (Monster monster in monsters)
 				monster.Draw (batch, camera.ViewFrustrum);
@@ -318,7 +304,9 @@ namespace Moxy.GameStates
 			batch.Begin (SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default,
 				RasterizerState.CullCounterClockwise, null, camera.GetTransformation (Moxy.Graphics));
 
-			FireballEmitter.Draw (batch);
+			foreach (ParticleManager particleManager in particleManagers)
+				particleManager.Draw (batch);
+
 			batch.End();
 		}
 
@@ -334,8 +322,9 @@ namespace Moxy.GameStates
 			batch.Begin (SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None,
 				RasterizerState.CullCounterClockwise, null, camera.GetTransformation (Moxy.Graphics));
 
-			foreach (Particle part in FireballEmitter.particles)
-				part.Light.Draw(batch);
+			foreach (ParticleManager particleManager in particleManagers)
+				foreach (Particle particle in particleManager.particles)
+					particle.Light.Draw (batch);
 
 			foreach (var monster in monsters)
 				if (monster.Light != null)
@@ -384,6 +373,7 @@ namespace Moxy.GameStates
 
 				lights.Add (player.Light);
 				camera.ViewTargets.Add (player);
+				particleManagers.AddRange (player.ParticleManagers);
 			}
 		
 
@@ -434,11 +424,6 @@ namespace Moxy.GameStates
 			texture.SetData (new[] { new Color (0, 0, 0, map.AmbientColor.A) });
 		}
 
-		private void OnBulletCollision(object sender, GenericEventArgs<Monster> e)
-		{
-
-		}
-
 		private void FindMonsterTargets (GameTime gameTime)
 		{
 			// TODO: Do this!
@@ -466,7 +451,6 @@ namespace Moxy.GameStates
 			if (Moxy.CurrentLevelIndex == 0)
 			{
 				Moxy.Dialog.EnqueueTimed ("Boss", "You think you can \n defeat me? Fools!", 3f);
-				//() => Moxy.StateManager.Set ("MainMenu")
 			}
 
 			// Only fade after the first level

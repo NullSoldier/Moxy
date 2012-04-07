@@ -43,7 +43,7 @@ namespace Moxy.Interface
 			batch.Draw(BackgroundTexture, drawRect, Player.Color);
 			var manaRect = drawRect;
 			manaRect.X += 5;
-			manaRect.Width = (int)MathHelper.Lerp(0, ManaSize.Width, 80f/100f);
+			manaRect.Width = (int)MathHelper.Lerp(0, ManaSize.Width, Player.Energy / Player.MaxEnergy);
 			manaRect.Height = ManaSize.Height;
 			
 			batch.Draw(ManabarTexture, manaRect, Color.Blue);

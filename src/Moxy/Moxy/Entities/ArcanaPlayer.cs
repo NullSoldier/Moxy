@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,8 +12,8 @@ namespace Moxy.Entities
 	{
 		public ArcanaPlayer()
 		{
+			ParticleManagers = new List<ParticleManager>();
 			CollisionRadius = 32;
-
 		}
 
 		public event EventHandler OnDeath;
@@ -24,6 +25,8 @@ namespace Moxy.Entities
 		public string Class;
 		public int Level;
 		public int Experience;
+		public float MaxHealth;
+		public float MaxEnergy;
 
 		// Character state
 		public PlayerIndex PadIndex;
@@ -33,6 +36,9 @@ namespace Moxy.Entities
 		public bool AIControlled;
 		public bool MovementDisabled;
 		public float Speed;
+		public float Health;
+		public float Energy;
+		public List<ParticleManager> ParticleManagers;
 
 		public void Damage (float amount)
 		{
