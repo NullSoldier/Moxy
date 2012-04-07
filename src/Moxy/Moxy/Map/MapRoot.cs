@@ -16,6 +16,7 @@ namespace Moxy
 			Dimensions = new Size(Width, Height);
 			TileDimensions = new Size(TileWidth, TileHeight);
 			CollidableID = new HashSet<int> ();
+			EnableCollision = false;
 			Texture = texture;
 			ViewCamera = Camera;
 
@@ -23,6 +24,7 @@ namespace Moxy
 			CreateLayers();
 			CreateSpawns();
 			CreateLights();
+			
 		}
 
 
@@ -37,6 +39,8 @@ namespace Moxy
 		public readonly Size Dimensions;
 		public readonly Size TileDimensions;
 		public readonly HashSet<int> CollidableID;
+
+		public bool EnableCollision;
 
 		public DynamicCamera ViewCamera;
 
@@ -100,7 +104,18 @@ namespace Moxy
 
 		public bool CheckCollision(int X, int Y)
 		{
-			return CollidableID.Contains ((int)Layers[(int)MapLayerType.Collision].Tiles[X, Y]);
+			if (EnableCollision)
+			{
+				var transX = (int) Math.Round(X/TileDimensions.Width) - 1;
+				var transY = (int) Math.Round(Y/TileDimensions.Height) - 1;
+				if (transX >= Dimensions.Width || transX < 0 || transY < 0 || transY >= Dimensions.Height)
+					return false;
+				else
+					return ((int)Layers[(int)MapLayerType.Collision].Tiles[transX, transY]) != 0;
+			}
+				
+			else
+				return false;
 		}
 
 		public bool CheckCollision(Point P)
@@ -115,12 +130,18 @@ namespace Moxy
 
 		public bool CheckCollision(Rectangle R)
 		{
-			return (CheckCollision(R.Left, R.Top)
-				|| CheckCollision(R.Left, R.Bottom)
-				|| CheckCollision(R.Right, R.Top)
-				|| CheckCollision(R.Right, R.Bottom)
-				|| CheckCollision(R.Center));
+			var failed = false;
+			for(var x = R.Left; x < R.Right && !failed; x += (int)TileDimensions.Width)
+				for(var y = R.Top; y < R.Bottom; y += (int)TileDimensions.Height)
+				{
+					failed = CheckCollision(x, y);
+					if (failed)
+						break;
+				}
+			return failed;
 		}
+
+
 
 		private void CreateBoundings()
 		{

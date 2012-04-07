@@ -234,6 +234,7 @@ namespace Moxy.GameStates
 				players[i].Location = map.PlayerSpawns[i];
 
 			isLoaded = true;
+			map.EnableCollision = true;
 			Moxy.StateManager.Push(uiOverlay);
 		}
 
@@ -241,11 +242,11 @@ namespace Moxy.GameStates
 		public BigBadBoss boss;
 		public BaseLevel Level;
 		public DynamicCamera camera;
+		public MapRoot map;
 		public bool InbetweenRounds = true;
 		public DateTime StartLevelTime;
 
 		private float MaxPlayerDistance = 1000;
-		private MapRoot map;
 		private Texture2D lightTexture;
 		private Texture2D texture;
 		private Texture2D radiusTexture;
@@ -374,6 +375,7 @@ namespace Moxy.GameStates
 				camera.ViewTargets.Add (player);
 				particleManagers.AddRange (player.ParticleManagers);
 			}
+		
 
 			//uiOverlay.ActivePlayers = players;
 		}
@@ -394,6 +396,15 @@ namespace Moxy.GameStates
 
 		private void Player_OnMovement (object sender, PlayerMovementEventArgs e)
 		{
+			var collisionRect = e.Player.Collision;
+			collisionRect.X = (int) e.NewLocation.X;
+			collisionRect.Y = (int) e.NewLocation.Y;
+
+			if (map.CheckCollision(collisionRect))
+			{
+				e.Handled = true;
+				e.NewLocation = e.CurrentLocation;
+			}
 			// TODO: Add distance limiting
 			// TODO: Add collision here
 		}
@@ -406,6 +417,7 @@ namespace Moxy.GameStates
 
 			map = new MapRoot(128, 128, 64, 64, Moxy.ContentManager.Load<Texture2D>("tileset"), camera);
 			map = Moxy.Maps[0].Build ();
+			map.EnableCollision = false;
 		
 
 			texture = new Texture2D (Moxy.Graphics, 1, 1);

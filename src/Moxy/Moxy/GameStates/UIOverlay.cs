@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,11 +29,10 @@ namespace Moxy.GameStates
 
 		public override void Draw(SpriteBatch batch)
 		{
-			batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, 
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, 
 				SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
 
 			playerInfo.Draw(batch);
-
 			batch.End();
 		}
 
@@ -41,6 +41,7 @@ namespace Moxy.GameStates
 			playerInfo.Update(gameTime);
 		}
 
+		private Texture2D pixel = Helpers.Pixel;
 		private GameState activeGameState;
 		private PlayerInfoFrame playerInfo;
 	}

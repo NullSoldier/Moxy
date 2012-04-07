@@ -64,8 +64,9 @@ namespace Moxy.Entities
 				OnDeath (this, null);
 
 			Light.Location = Location + new Vector2 (32, 32);
-			Collision = Helpers.CreateCenteredRectangle (Location, CollisionRadius, CollisionRadius);
-			CollisionCenter = Collision.Center.ToVector2();
+			Collision = Helpers.CreateCenteredRectangle(Location + new Vector2(16, 16)*moveVector,
+			                                            CollisionRadius
+														, CollisionRadius);
 
 			if (needUpdateAnimation)
 				SetAnimation (animation);
@@ -83,7 +84,7 @@ namespace Moxy.Entities
 
 		private void HandleInput (GameTime gameTime)
 		{
-			Vector2 moveVector = Moxy.CurrentPadStates[PadIndex].ThumbSticks.Left
+			moveVector = Moxy.CurrentPadStates[PadIndex].ThumbSticks.Left
 				.SafelyNormalize ()
 				.NegateY ();
 
@@ -106,7 +107,7 @@ namespace Moxy.Entities
 			var playerMoveEventArgs = new PlayerMovementEventArgs
 			{
 				CurrentLocation = Location,
-				NewLocation = Location + moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds,
+				NewLocation = Location +(moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds),
 				Player = this,
 				Handled = false
 			};
@@ -114,8 +115,8 @@ namespace Moxy.Entities
 			if (OnMovement != null)
 				OnMovement (this, playerMoveEventArgs);
 
-			base.Location += !playerMoveEventArgs.Handled
-				? moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds
+			base.Location = !playerMoveEventArgs.Handled
+				? Location + moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds
 				: playerMoveEventArgs.NewLocation;
 
 			if (moveVector.Length () != 0)
@@ -128,6 +129,7 @@ namespace Moxy.Entities
 		protected string animation;
 		private Vector2 lastMovement;
 		protected bool needUpdateAnimation;
+		private Vector2 moveVector;
 
 		private void SetAnimation (string animation)
 		{
