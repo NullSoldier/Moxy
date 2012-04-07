@@ -24,15 +24,12 @@ namespace Moxy
 			CreateLayers();
 			CreateSpawns();
 			CreateLights();
-			
 		}
-
 
 		public MapRoot(string File)
 		{
 			throw new NotImplementedException();
-		} 
-
+		}
 	
 		public readonly Texture2D Texture;
 		public readonly MapLayer[] Layers;
@@ -41,11 +38,9 @@ namespace Moxy
 		public readonly HashSet<int> CollidableID;
 
 		public bool EnableCollision;
-
+		public Texture2D BackgroundTexture;
 		public DynamicCamera ViewCamera;
-
 		public Color AmbientColor;
-	
 		public Rectangle[] Boundings;
 
 		public Vector2 LocationOffset;

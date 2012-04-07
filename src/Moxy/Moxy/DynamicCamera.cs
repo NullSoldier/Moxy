@@ -39,14 +39,19 @@ namespace Moxy
 			       Matrix.CreateScale(new Vector3(Zoom, Zoom, 0));
 		}
 
-		public void MoveDiff(Vector2 Dif)
+		public void MoveDiff (Vector2 Dif)
 		{
 			desiredPosition += Dif;
 		}
 
-		public void ZoomDiff(float Dif)
+		public void ZoomDiff (float Dif)
 		{
 			desiredZoom += Dif;
+		}
+
+		public void SetDesiredZoom(float zoom)
+		{
+			desiredZoom = zoom;
 		}
 
 		public void Update(GraphicsDevice graphicsdevice)

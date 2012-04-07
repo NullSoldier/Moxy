@@ -200,7 +200,6 @@ namespace Moxy.GameStates
 
 			lightingEffect = Moxy.ContentManager.Load<Effect> ("lighting");
 			lightTexture = Moxy.ContentManager.Load<Texture2D> ("light");
-			radiusTexture = Moxy.ContentManager.Load<Texture2D> ("Radius");
 
 			waveDoneSound = Moxy.ContentManager.Load<SoundEffect> ("Sounds\\waveComplete");
 			levelUpSound = Moxy.ContentManager.Load<SoundEffect> ("Sounds\\LevelUp");
@@ -249,7 +248,6 @@ namespace Moxy.GameStates
 		private float MaxPlayerDistance = 1000;
 		private Texture2D lightTexture;
 		private Texture2D texture;
-		private Texture2D radiusTexture;
 		private SoundEffect waveDoneSound;
 		private SoundEffect levelUpSound;
 		private List<Light> lights;
@@ -281,19 +279,23 @@ namespace Moxy.GameStates
 			Moxy.Graphics.SetRenderTarget (gameTarget);
 			Moxy.Graphics.Clear (Color.CornflowerBlue);
 
+			batch.Begin();
+			batch.Draw (map.BackgroundTexture, new Rectangle(0, 0, 800, 600), Color.White);
+			batch.End();
+
 			batch.Begin (SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None,
 				RasterizerState.CullCounterClockwise, null, camera.GetTransformation (Moxy.Graphics));
 
 			map.Draw(batch);
+
+			foreach (var item in items)
+				item.Draw (batch, camera.ViewFrustrum);
 
 			foreach (ArcanaPlayer player in players)
 				player.Draw(batch, camera.ViewFrustrum);
 
 			foreach (Monster monster in monsters)
 				monster.Draw (batch, camera.ViewFrustrum);
-
-			foreach (var item in items)
-				item.Draw(batch, camera.ViewFrustrum);
 
 			if (boss != null)
 				boss.Draw(batch);

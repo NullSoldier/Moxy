@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 using Moxy.GameStates;
 using System.Reflection;
 using Moxy.Levels;
+using Moxy.Map;
 
 namespace Moxy
 {
@@ -34,6 +35,8 @@ namespace Moxy
 		public static GameTime GameTime;
 		public static Dictionary<PlayerIndex, GamePadState> CurrentPadStates;
 		public static Dictionary<PlayerIndex, GamePadState> LastPadStates;
+		public static KeyboardState CurrentKeyboard;
+		public static KeyboardState LastKeyboard;
 		public static int CurrentLevelIndex = -1;
 		public static MapBuilder[] Maps;
 		public static BaseLevel[] Levels;
@@ -78,7 +81,7 @@ namespace Moxy
 
 			Moxy.Maps = new MapBuilder[]
 			{
-				new Map1Builder()
+				new Map2Builder()
 			};
 
 			Moxy.Levels = new BaseLevel[]
@@ -107,8 +110,12 @@ namespace Moxy
 					CurrentPadStates[padIndex] = GamePad.GetState (padIndex);
 			}
 
+			CurrentKeyboard = Keyboard.GetState ();
+
 			Moxy.StateManager.Update (gameTime);
 			Moxy.Dialog.Update (gameTime);
+
+			LastKeyboard = CurrentKeyboard;
 
 			foreach (PlayerIndex padIndex in CurrentPadStates.Keys.ToArray())
 				LastPadStates[padIndex] = CurrentPadStates[padIndex];
