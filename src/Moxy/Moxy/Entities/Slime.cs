@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Moxy.Events;
 
 namespace Moxy.Entities
 {
@@ -53,7 +54,7 @@ namespace Moxy.Entities
 
 		public float SlimeDamage = 5f;
 
-		private void Slime_OnCollisionWithPlayer(object sender, Events.GenericEventArgs<Player> e)
+		private void Slime_OnCollisionWithPlayer(object sender, GenericEventArgs<ArcanaPlayer> e)
 		{
 			e.Data.Damage(SlimeDamage * (float)Moxy.GameTime.ElapsedGameTime.TotalSeconds);
 		}

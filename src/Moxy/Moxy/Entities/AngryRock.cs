@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Moxy.Events;
 
 namespace Moxy.Entities
 {
@@ -47,7 +48,7 @@ namespace Moxy.Entities
 
 			EntityType = global::Moxy.EntityType.Slime;
 
-			OnCollisionWithPlayer += new EventHandler<Events.GenericEventArgs<Player>>(AngryRock_OnCollisionWithPlayer);
+			OnCollisionWithPlayer += AngryRock_OnCollisionWithPlayer;
 		}
 
 		public override void  Update(GameTime gameTime)
@@ -56,7 +57,7 @@ namespace Moxy.Entities
  			 base.Update(gameTime);
 		}
 
-		void AngryRock_OnCollisionWithPlayer(object sender, Events.GenericEventArgs<Player> e)
+		void AngryRock_OnCollisionWithPlayer (object sender, GenericEventArgs<ArcanaPlayer> e)
 		{
 			if (currentTime >= RockAttackSpeed)
 			{

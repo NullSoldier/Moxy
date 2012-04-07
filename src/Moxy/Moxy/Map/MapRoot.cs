@@ -45,10 +45,7 @@ namespace Moxy
 		public Rectangle[] Boundings;
 
 		public Vector2 LocationOffset;
-		public Vector2 TeamRedSpawn;
-		public Vector2 TeamBlueSpawn;
-		public Vector2[] PowerGeneratorSpawns;
-		public Vector2[] GunnerSpawns;
+		public Vector2[] PlayerSpawns;
 
 		public List<MonsterSpawner> MonsterSpawners;
 		public List<Light> PointLights;
@@ -149,8 +146,7 @@ namespace Moxy
 
 		private void CreateSpawns()
 		{
-			GunnerSpawns = new Vector2[2];
-			PowerGeneratorSpawns = new Vector2[2];
+			PlayerSpawns = new Vector2[4];
 			MonsterSpawners = new List<MonsterSpawner>();
 		}
 

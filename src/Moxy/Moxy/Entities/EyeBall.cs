@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Moxy.Events;
 
 namespace Moxy.Entities
 {
@@ -36,7 +37,7 @@ namespace Moxy.Entities
 
 		public float EyeBallDamage = 10f;
 
-		void EyeBall_OnCollisionWithPlayer(object sender, Events.GenericEventArgs<Player> e)
+		void EyeBall_OnCollisionWithPlayer(object sender, GenericEventArgs<ArcanaPlayer> e)
 		{
 			e.Data.Damage(EyeBallDamage * (float)Moxy.GameTime.ElapsedGameTime.TotalSeconds);
 		}

@@ -9,6 +9,14 @@ namespace Moxy
 {
 	public static class CharacterSerializer
 	{
+		static CharacterSerializer()
+		{
+			classConstructors = new Dictionary<string, Func<ArcanaPlayer>>
+			{
+				{"Mage", () => new Mage()}
+			};
+		}
+
 		public static void WriteCharacter (XmlTextWriter writer, ArcanaPlayer player)
 		{
 			writer.WriteStartElement ("Character");
@@ -23,22 +31,25 @@ namespace Moxy
 
 		public static ArcanaPlayer ReadCharacter (XmlTextReader reader)
 		{
-			reader.ReadStartElement("Character");
+			reader.ReadStartElement ("Character");
 
 			int id = Convert.ToInt32 (reader.ReadElementString ("CharacterID"));
 			string name = reader.ReadElementString ("Name");
 			string pclass = reader.ReadElementString ("Class");
 			int level = Convert.ToInt32 (reader.ReadElementString ("Level"));
 
-			reader.ReadEndElement();
+			reader.ReadEndElement ();
 
-			return new ArcanaPlayer
+			ArcanaPlayer p = classConstructors[pclass] ();
 			{
-				CharacterID = id,
-				Name = name,
-				Class = pclass,
-				Level = level
-			};
+				p.CharacterID = id;
+				p.Name = name;
+				p.Class = pclass;
+				p.Level = level;
+			}
+			return p;
 		}
+
+		private static Dictionary<string, Func<ArcanaPlayer>> classConstructors;
 	}
 }

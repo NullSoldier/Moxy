@@ -59,7 +59,7 @@ namespace Moxy
 			return rect;
 		}
 
-		public static int GetLoopableInt(int value, int min, int max)
+		public static int GetLoopableInt (int value, int min, int max)
 		{
 			if (value < min)
 				return max;
@@ -67,6 +67,11 @@ namespace Moxy
 				return min;
 
 			return value;
+		}
+
+		public static int NextDouble2 (this Random self)
+		{
+			return self.NextDouble () < 0.5 ? 0 : 1;
 		}
 	}
 }

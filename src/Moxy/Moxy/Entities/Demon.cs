@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Moxy.Events;
 
 namespace Moxy.Entities
 {
@@ -47,7 +48,7 @@ namespace Moxy.Entities
 
 		public float DemonDamage = 30f;
 
-		void Demon_OnCollisionWithPlayer(object sender, Events.GenericEventArgs<Player> e)
+		void Demon_OnCollisionWithPlayer(object sender, GenericEventArgs<ArcanaPlayer> e)
 		{
 			if (attackCounter > attackRate)
 			{

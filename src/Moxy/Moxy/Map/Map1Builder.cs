@@ -30,11 +30,10 @@ namespace Moxy
 			AddMonster (map, new Vector2 (208, 1797), "Slime", 1f, 10);
 			
 			//Add Player Spawn
-			map.GunnerSpawns[0] = new Vector2(1692, 2110);
-			map.GunnerSpawns[1] = new Vector2(1250, 2010);
-
-			map.PowerGeneratorSpawns[0] = new Vector2(1520, 2000);
-			map.PowerGeneratorSpawns[1] = new Vector2(1123, 1930);
+			map.PlayerSpawns[0] = new Vector2(1692, 2110);
+			map.PlayerSpawns[1] = new Vector2 (1250, 2010);
+			map.PlayerSpawns[2] = new Vector2 (1520, 2000);
+			map.PlayerSpawns[3] = new Vector2 (1123, 1930);
 
 			loadBaseLayer (map);
 			loadDecalLayer (map);

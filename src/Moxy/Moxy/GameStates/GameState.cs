@@ -21,14 +21,16 @@ namespace Moxy.GameStates
 		public GameState()
 			: base ("Game", isOverlay: false, acceptsInput: true)
 		{
-			players = new List<Player> (4);
+			players = new List<ArcanaPlayer> (4);
 			lights = new List<Light>();
 			monsters = new List<Monster>();
-			monsterPurgeQueue = new Queue<Monster>();
-			items = new List<Item>();
-			itemPurgeQueue = new Queue<Item>();
-			redPacketEmitter = new EnergyPacketEmitter();
-			FireballEmitter = new FireballEmitter();
+			items = new List<Item> ();
+
+			// Utility queues
+			monsterPurgeQueue = new Queue<Monster> ();
+			itemPurgeQueue = new Queue<Item> ();
+
+			FireballEmitter = new FireballEmitter ();
 			FireballEmitter.OnParticleMonsterCollision += OnBulletCollision;
 		}
 
@@ -40,13 +42,9 @@ namespace Moxy.GameStates
 			camera.Update (Moxy.Graphics);
 			map.Update (gameTime);
 
-			if (boss != null)
-				boss.Update(gameTime);
-
-			if (boss == null)
+			foreach (var player in players)
 			{
-				foreach (var player in players)
-					player.Update(gameTime);
+				player.Update (gameTime);
 			}
 
 			if (!InbetweenRounds)
@@ -54,21 +52,23 @@ namespace Moxy.GameStates
 				foreach (var item in items)
 				{
 					item.Update (gameTime);
-					item.CheckCollision (gunner1);
-					item.CheckCollision (powerGenerator1);
 				}
 
+				// Clear out items
 				while (itemPurgeQueue.Count > 0)
 					items.Remove (itemPurgeQueue.Dequeue());
 
 				foreach (var monster in monsters)
 				{
 					monster.Update (gameTime);
+					
 					FireballEmitter.CheckCollision (monster);
-					monster.CheckCollide (gunner1);
-					monster.CheckCollide (powerGenerator1);
+
+					foreach (ArcanaPlayer player in players)
+						monster.CheckCollide (player);
 				}
 
+				// Clear out monsters
 				while (monsterPurgeQueue.Count > 0)
 					monsters.Remove (monsterPurgeQueue.Dequeue());
 
@@ -83,16 +83,16 @@ namespace Moxy.GameStates
 					int x = 0;
 					int y = 0;
 
-					var verticalOrHorizontal = GetRandomDouble ();
+					var verticalOrHorizontal = Moxy.Random.NextDouble2 ();
 					if (verticalOrHorizontal == 0)
 					{
-						var topBottom = GetRandomDouble ();
+						var topBottom = Moxy.Random.NextDouble2 ();
 						x = Moxy.Random.Next (bounds.X, bounds.X + bounds.Width);
 						y = bounds.Y + (bounds.Height * topBottom);
 					}
 					else
 					{
-						var leftRight = GetRandomDouble ();
+						var leftRight = Moxy.Random.NextDouble2 ();
 						x = bounds.X + (bounds.Width * leftRight);
 						y = Moxy.Random.Next (bounds.Y, bounds.Y + bounds.Height);
 					}
@@ -105,8 +105,9 @@ namespace Moxy.GameStates
 						monster.OnDeath += monster_OnDeath;
 						monsters.Add(monster);
 
-						var chanceToAttackGen = Moxy.Random.NextDouble ();
-						monster.Target = (chanceToAttackGen <= 0.30f) ? (Player)powerGenerator1 : (Player)gunner1;
+						//var chanceToAttackGen = Moxy.Random.NextDouble ();
+						//TODO: Add proper targeting (chanceToAttackGen <= 0.30f) ? (Player)powerGenerator1 : (Player)gunner1;
+						monster.Target = players[0];
 
 						Level.SpawnDelay = Moxy.Random.Next((int)Level.SpawnIntervalLow, (int)Level.SpawnIntervalHigh);
 						spawnPassed = 0;
@@ -114,11 +115,8 @@ namespace Moxy.GameStates
 				}
 			}
 
-			redPacketEmitter.CalculateEnergyRate(gameTime);
 			//GenerateEnergy (gameTime);
-			redPacketEmitter.GenerateParticles(gameTime);
 			FindMonsterTargets (gameTime);
-			redPacketEmitter.Update (gameTime);
 			FireballEmitter.Update(gameTime);
 
 			// Should we fade the lights?
@@ -126,9 +124,6 @@ namespace Moxy.GameStates
 			{
 				fadePassed += (float)gameTime.ElapsedGameTime.TotalSeconds;
 				float lerp = MathHelper.Clamp (fadePassed / fadeTotal, 0, 1f);
-
-				var color = startFadeColor.ToVector4();
-				var colorTo = Level.AmbientLight.ToVector4();
 
 				float lerpValue = MathHelper.Lerp (startFadeColor.A, Level.AmbientLight.A, fadePassed / fadeTotal);
 				map.AmbientColor = new Color (10, 10, 10, (int)lerpValue);
@@ -141,14 +136,14 @@ namespace Moxy.GameStates
 			// Check if the level timer has expired
 			if (Level != null && !InbetweenRounds && DateTime.Now.Subtract (StartLevelTime).TotalSeconds > Level.WaveLength)
 			{
-				HealPlayers ();
-				CheckPlayerLevels ();
+				HealPlayers();
+				CheckPlayerLevels();
 				waveDoneSound.Play (0.8f, 0.1f, 0f);
 				LoadNextLevel();
 			}
 		}
 
-		public void monster_OnDeath(object sender, EventArgs e)
+		public void monster_OnDeath (object sender, EventArgs e)
 		{
 			monsterCount--;
 
@@ -233,33 +228,22 @@ namespace Moxy.GameStates
 			{
 				Reset ();
 				LoadMap();
-				//LoadPlayers();
+				LoadPlayers();
 				LoadNextLevel ();
 				characterSelectState.CharactersSelected = false;
 			}
 
-			if(gunner1 != null)
-				gunner1.Location = map.GunnerSpawns[0];
-			if (powerGenerator1 != null)
-				powerGenerator1.Location = map.PowerGeneratorSpawns[0];
-			if (gunner2 != null)
-				gunner2.Location = map.GunnerSpawns[1];
-			if (powerGenerator2 != null)
-				powerGenerator2.Location = map.PowerGeneratorSpawns[1];
+			for (int i = 0; i < players.Count; i++)
+				players[i].Location = map.PlayerSpawns[i];
 
 			isLoaded = true;
 			Moxy.StateManager.Push(uiOverlay);
 		}
 
-
 		public BigBadBoss boss;
 		private float MaxPlayerDistance = 1000;
-		private Gunner gunner1;
 		private FireballEmitter FireballEmitter;
-		private Gunner gunner2;
-		private PowerGenerator powerGenerator1;
-		private PowerGenerator powerGenerator2;
-		private List<Player> players;
+		private List<ArcanaPlayer> players;
 		public DynamicCamera camera;
 		private MapRoot map;
 		private Texture2D lightTexture;
@@ -294,6 +278,7 @@ namespace Moxy.GameStates
 		public int Team2Score;
 		public int[] ExperienceTable;
 		private int lastAIID = 6;
+		private int playersDead = 0;
 
 		private bool fadingLight;
 		private Color startFadeColor;
@@ -313,7 +298,7 @@ namespace Moxy.GameStates
 
 			//if (boss == null)
 			{
-				foreach (Player player in players)
+				foreach (ArcanaPlayer player in players)
 					player.Draw(batch, camera.ViewFrustrum);
 			}
 
@@ -332,7 +317,6 @@ namespace Moxy.GameStates
 			batch.Begin (SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default,
 				RasterizerState.CullCounterClockwise, null, camera.GetTransformation (Moxy.Graphics));
 
-			redPacketEmitter.Draw (batch);
 			FireballEmitter.Draw (batch);
 			batch.End();
 		}
@@ -366,9 +350,6 @@ namespace Moxy.GameStates
 			foreach (Light light in map.PointLights)
 				light.Draw (batch);
 
-			foreach (var part in redPacketEmitter.particles)
-				part.Light.Draw(batch);
-
 			batch.End ();
 		}
 
@@ -390,137 +371,40 @@ namespace Moxy.GameStates
 			//TODO: Add blue removable here
 		}
 
-		/*private void LoadPlayers()
+		private void LoadPlayers()
 		{
-			float gunnerSpeed = 0.2f;//0.1f;
-			float enchanterSpeed = 0.3f;
-			PlayerIndex invalidPlayerIndex = (PlayerIndex)5;
+			//FireballEmitter = FireballEmitter,
 
-			if (characterSelectState.Gunner1 != invalidPlayerIndex
-				|| characterSelectState.PowerGenerator1 != invalidPlayerIndex)
+			players.AddRange (characterSelectState.Players);
+
+			foreach (ArcanaPlayer player in players)
 			{
-				gunner1 = new Gunner
-				{
-					PadIndex = characterSelectState.Gunner1,
-					Color = Color.White,
-					Location = new Vector2 (700, 700),
-					Speed = gunnerSpeed,
-					Light = new Light (Color.White, lightTexture) { Scale = 1.5f },
-					Team = Team.Red,
-					FireballEmitter = FireballEmitter,
-					AIControlled = characterSelectState.Gunner1 == invalidPlayerIndex,
-				};
+				player.Light = new Light (Color.White, lightTexture) { Scale = 1.5f };
+				player.Speed = 0.25f;
+				player.Color = Color.White;
 
-				// Gunner 1 is controlled by AI
-				if (gunner1.PadIndex == invalidPlayerIndex)
-				{
-					gunner1.PadIndex = GenerateAIIndex();
-					gunner1.AIControlled = true;
-				}
+				player.OnMovement += Player_OnMovement;
+				player.OnDeath += Player_OnDeath;
 
-				powerGenerator1 = new PowerGenerator
-				{
-					PadIndex = characterSelectState.PowerGenerator1,
-					Color = Color.White,
-					Location = new Vector2 (780, 700),
-					Speed = enchanterSpeed,
-					Light = new Light (Color.White, lightTexture) { Scale = 1.5f },
-					Team = Team.Red,
-					Gunner = gunner1,
-					AIControlled = characterSelectState.PowerGenerator1 == invalidPlayerIndex,
-				};
-
-				// Power gen 1 is controlled by AI
-				if (powerGenerator1.PadIndex == invalidPlayerIndex)
-				{
-					powerGenerator1.PadIndex = GenerateAIIndex ();
-					powerGenerator1.AIControlled = true;
-				}
-
-				gunner1.OnMovement += (Player_OnMovement);
-				powerGenerator1.OnMovement += (Player_OnMovement);
-				gunner1.OnDeath += (Player_OnDeath);
-				
-
-				gunner1.Generator = powerGenerator1;
-
-				redPacketEmitter.Target = gunner1;
-				redPacketEmitter.Source = powerGenerator1;
-
-				lights.Add (gunner1.Light);
-				lights.Add (powerGenerator1.Light);
-
-				players.Add (gunner1);
-				players.Add (powerGenerator1);
-
-				camera.ViewTargets.Add (gunner1);
-				camera.ViewTargets.Add (powerGenerator1);
+				lights.Add (player.Light);
+				camera.ViewTargets.Add (player);
 			}
 
-			if (characterSelectState.Gunner2 != invalidPlayerIndex
-				|| characterSelectState.PowerGenerator2 != invalidPlayerIndex)
-			{
-				gunner2 = new Gunner
-				{
-					PadIndex = characterSelectState.Gunner2,
-					Color = Color.White,
-					Location = new Vector2 (200, 0),
-					Speed = gunnerSpeed,
-					Light = new Light (Color.White, lightTexture),
-					Team = Team.Red,
-					FireballEmitter = FireballEmitter
-				};
-
-				powerGenerator2 = new PowerGenerator
-				{
-					PadIndex = characterSelectState.PowerGenerator2,
-					Color = Color.White,
-					Location = new Vector2 (400, 0),
-					Speed = enchanterSpeed,
-					Light = new Light (Color.White, lightTexture),
-					Team = Team.Red,
-					Gunner = gunner2,
-				};
-
-				gunner2.Generator = powerGenerator2;
-
-				redPacketEmitter.Target = gunner2;
-				redPacketEmitter.Source = powerGenerator2;
-
-				lights.Add (gunner2.Light);
-				lights.Add (powerGenerator2.Light);
-
-				players.Add (gunner2);
-				players.Add (powerGenerator2);
-
-				camera.ViewTargets.Add (gunner2);
-				camera.ViewTargets.Add (powerGenerator2);
-			}
-
-			uiOverlay.ActivePlayers = players;
-		}*/
-
-
-		private PlayerIndex GenerateAIIndex()
-		{
-			PlayerIndex index = (PlayerIndex)(++lastAIID);
-			Moxy.CurrentPadStates.Add (index, default (GamePadState));
-			Moxy.LastPadStates.Add (index, default(GamePadState));
-
-			return index;
+			//uiOverlay.ActivePlayers = players;
 		}
 
-		void Player_OnDeath(object sender, EventArgs e)
+		private void Player_OnDeath(object sender, EventArgs e)
 		{
-			if (boss == null)
+			playersDead++;
+
+			if (playersDead >= players.Count)
 			{
 				gamePauseTimer.Change (Timeout.Infinite, Timeout.Infinite);
-				boss = new BigBadBoss (gunner1.Location);
+				boss = new BigBadBoss (players[0].Location);
 				boss.Animations.SetAnimation ("Spawn");
-
+			
 				Moxy.Dialog.EnqueueMessageBox ("Boss", "Your deaths were\nin vain.", () => Moxy.StateManager.Set ("MainMenu"));
 			}
-			//Moxy.StateManager.Pop();
 		}
 
 		private void Player_OnMovement (object sender, PlayerMovementEventArgs e)
@@ -587,15 +471,6 @@ namespace Moxy.GameStates
 			}
 		}
 
-		private int GetRandomDouble()
-		{
-			double random = Moxy.Random.NextDouble ();
-			if (random < 0.5)
-				return 0;
-			else
-				return 1;
-		}
-
 		private void timer_StartNextRound (object state)
 		{
 			gamePauseTimer.Change (Timeout.Infinite, Timeout.Infinite);
@@ -605,37 +480,19 @@ namespace Moxy.GameStates
 
 		private void HealPlayers()
 		{
-			if (gunner1 != null)
-				gunner1.Health = gunner1.MaxHealth;
-			if (powerGenerator1 != null)
-				powerGenerator1.Health = powerGenerator1.MaxHealth;
-			if (gunner2 != null)
-				gunner2.Health = gunner2.MaxHealth;
-			if (powerGenerator2 != null)
-				powerGenerator2.Health = powerGenerator2.MaxHealth;
+			foreach (ArcanaPlayer player in players)
+ 				player.Health = player.MaxHealth;
 		}
 
-		private bool strongerMessage = false;
 		private void CheckPlayerLevels()
 		{
-			if (gunner1 != null && gunner1.Level < ExperienceTable.Length && Team1Score >= ExperienceTable[gunner1.Level])
+			foreach (ArcanaPlayer player in players)
 			{
-				if (!strongerMessage)
+				if (player.Level < ExperienceTable.Length && player.Experience > ExperienceTable[player.Level])
 				{
-					Moxy.Dialog.EnqueueTimed ("Boss", "So you've gotten stronger?\nSo what!", 3f);
-					strongerMessage = true;
+					levelUpSound.Play (1.0f, 0f, 0f);
+					player.Level++;
 				}
-
-				levelUpSound.Play (1.0f, 0f, 0f);
-				gunner1.Level++;
-				powerGenerator1.Level++;
-			}
-
-			if (gunner2 != null && gunner2.Level < ExperienceTable.Length && Team2Score >= ExperienceTable[gunner2.Level])
-			{
-				levelUpSound.Play (1.0f, 0f, 0f);
-				gunner2.Level++;
-				powerGenerator2.Level++;
 			}
 		}
 	}

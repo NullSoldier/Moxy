@@ -13,7 +13,7 @@ namespace Moxy
 		public Vector2 Position = Vector2.Zero;
 		public float Zoom = 1;
 		public float Rotation = 0;
-		public List<Player> ViewTargets = new List<Player>();
+		public List<ArcanaPlayer> ViewTargets = new List<ArcanaPlayer> ();
 
 		public bool UseBounds;
 		public Size MinimumSize;

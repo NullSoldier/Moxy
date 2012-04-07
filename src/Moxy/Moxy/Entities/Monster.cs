@@ -18,7 +18,7 @@ namespace Moxy.Entities
 		public Vector2 TargetDirection;
 		public float MovementSpeed;
 		public float TurnSpeed;
-		public Player Target;
+		public ArcanaPlayer Target;
 		public ElementalTypeEnum Element;
 		public Vector2 Origin;
 		public Light Light;
@@ -26,11 +26,11 @@ namespace Moxy.Entities
 		public float HighSpeed;
 		public int ScoreGiven;
 
-		public void CheckCollide(Player player)
+		public void CheckCollide(ArcanaPlayer player)
 		{
 			var distance = Vector2.Distance(player.CollisionCenter, CollisionCenter);
 			if (Alive && distance < player.CollisionRadius + CollisionRadius && OnCollisionWithPlayer != null)
-				OnCollisionWithPlayer (this, new GenericEventArgs<Player> (player));
+				OnCollisionWithPlayer (this, new GenericEventArgs<ArcanaPlayer> (player));
 		}
 
 		public override void Update(GameTime gameTime)
@@ -127,7 +127,7 @@ namespace Moxy.Entities
 
 
 		public event EventHandler OnDeath;
-		public event EventHandler<GenericEventArgs<Player>> OnCollisionWithPlayer;
+		public event EventHandler<GenericEventArgs<ArcanaPlayer>> OnCollisionWithPlayer;
 
 	}
 

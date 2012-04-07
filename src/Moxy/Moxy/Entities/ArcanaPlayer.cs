@@ -17,6 +17,7 @@ namespace Moxy.Entities
 		public string Name;
 		public string Class;
 		public int Level;
+		public int Experience;
 
 		// Character state
 		public PlayerIndex PadIndex;

@@ -50,9 +50,7 @@ namespace Moxy.Interface
 
 			using (XmlTextReader treader = new XmlTextReader (classTemplateRoot))
 			{
-				treader.Read ();
 				treader.ReadStartElement ("Classes");
-				treader.MoveToElement ();
 
 				while (treader.Read () && treader.NodeType != XmlNodeType.EndElement)
 				{
