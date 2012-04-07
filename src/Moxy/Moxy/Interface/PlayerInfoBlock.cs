@@ -38,24 +38,25 @@ namespace Moxy.Interface
 				return;
 			}
 				
-
-			
 			batch.Draw(BackgroundTexture, drawRect, Player.Color);
+			
 			var manaRect = drawRect;
 			manaRect.X += 5;
 			manaRect.Width = (int)MathHelper.Lerp(0, ManaSize.Width, Player.Energy / Player.MaxEnergy);
 			manaRect.Height = ManaSize.Height;
-			
 			batch.Draw(ManabarTexture, manaRect, Color.Blue);
+			
 			var nameLocation = new Vector2(drawRect.X, drawRect.Y);
 			var nameSize = InfoFont.MeasureString(Player.Name);
 			nameLocation.X += ((drawRect.Width - nameSize.X)/2f);
 			nameLocation.Y += 45;
 			batch.DrawString(InfoFont, Player.Name, nameLocation, Color.Goldenrod);
+			
 			var scoreLocation = new Vector2(drawRect.X, nameLocation.Y);
 			scoreLocation.X += 5;
 			scoreLocation.Y += nameSize.Y + 10;
-			batch.DrawString(InfoFont, ((int)Player.PlayerScore).ToString(), scoreLocation, Color.Goldenrod);
+			batch.DrawString(InfoFont, Player.Experience.ToString(), scoreLocation, Color.Goldenrod);
+			
 			var healthLocation = scoreLocation + new Vector2(drawRect.Width/2f, 0f);
 			batch.DrawString(InfoFont, ((int)Player.Health).ToString(), healthLocation, Color.Goldenrod);
 		}
