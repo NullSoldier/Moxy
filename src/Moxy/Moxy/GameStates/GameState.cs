@@ -237,6 +237,7 @@ namespace Moxy.GameStates
 			Moxy.StateManager.Push(uiOverlay);
 		}
 
+		public List<ArcanaPlayer> players;
 		public BigBadBoss boss;
 		public BaseLevel Level;
 		public DynamicCamera camera;
@@ -244,7 +245,6 @@ namespace Moxy.GameStates
 		public DateTime StartLevelTime;
 
 		private float MaxPlayerDistance = 1000;
-		private List<ArcanaPlayer> players;
 		private MapRoot map;
 		private Texture2D lightTexture;
 		private Texture2D texture;
@@ -348,12 +348,7 @@ namespace Moxy.GameStates
 			players.Clear();
 			monsters.Clear();
 
-			uiOverlay.ActivePlayers.Clear();
-			uiOverlay.StatusBars.Clear();
-			uiOverlay.RedEnergyBar = null;
-			uiOverlay.RedSkillBar = null;
-			uiOverlay.RedRuneBar = null;
-			uiOverlay.BlueEnergyBar = null;
+			uiOverlay.Load();
 
 			boss = null;
 			Moxy.CurrentLevelIndex = -1;
