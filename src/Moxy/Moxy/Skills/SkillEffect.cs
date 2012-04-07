@@ -76,9 +76,9 @@ namespace Moxy.Skills
 			var second = new Vector2((float)Math.Cos(rads + MathHelper.PiOver4/3), (float)Math.Sin(rads + MathHelper.PiOver4/3));
 			var third = new Vector2((float)Math.Cos(rads - MathHelper.PiOver4/3), (float)Math.Sin(rads - MathHelper.PiOver4/3));
 			e.Handled = true;
-			Target.FireballEmitter.GenerateParticles(Moxy.GameTime, e.FireVector);
-			Target.FireballEmitter.GenerateParticles(Moxy.GameTime, second);
-			Target.FireballEmitter.GenerateParticles(Moxy.GameTime, third);
+			//Target.FireballEmitter.GenerateParticles(Moxy.GameTime, e.FireVector);
+			//Target.FireballEmitter.GenerateParticles(Moxy.GameTime, second);
+			//Target.FireballEmitter.GenerateParticles(Moxy.GameTime, third);
 		}
 	}
 

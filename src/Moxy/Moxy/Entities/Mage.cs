@@ -21,29 +21,24 @@ namespace Moxy.Entities
 			EntityType = EntityType.Mage;
 			Animations.SetAnimation("Walk_1");
 			
+			fireballEmitter = new FireballEmitter ();
+			fireballEmitter.ParticleTexture = Moxy.ContentManager.Load<Texture2D> ("Fireball");
+			fireballEmitter.OnParticleMonsterCollision += fireballEmitter_OnParticleMonsterCollision;
+			ParticleManagers.Add (fireballEmitter);
+
 			Health = 100;
 			MaxHealth = 100;
 			Mana = 500;
 			MaxMana = 500;
 		}
 
-		public FireballEmitter FireballEmitter
-		{
-			get { return fireballEmitter; }
-			set
-			{
-				fireballEmitter.OnParticleMonsterCollision += fireballEmitter_OnParticleMonsterCollision;
-				fireballEmitter = value;
-			}
-		}
-
-		public SoundEffect fireSound;
 		public float Mana;
 		public float MaxMana;
 
 		public override void Update (GameTime gameTime)
 		{
 			HandleInput(gameTime);
+			fireballEmitter.Update (gameTime);
 
 			base.Update(gameTime);
 		}
@@ -71,7 +66,7 @@ namespace Moxy.Entities
 			var fireVolume = MathHelper.Lerp ((float)Moxy.Random.NextDouble (), 0.7f, 0.8f);
 			fireSound.Play (fireVolume, firePitch, 0f);
 
-			fireballEmitter.GenerateParticles (gameTime, lookVector);
+			fireballEmitter.GenerateParticles (gameTime, this, lookVector);
 			Mana -= 10;
 		}
 
@@ -81,6 +76,7 @@ namespace Moxy.Entities
 		}
 
 		private FireballEmitter fireballEmitter;
+		private SoundEffect fireSound;
 		private TimeSpan AttackTimeElapsed;
 		private TimeSpan AttackCooldown = new TimeSpan(0, 0, 0, 0, 500);
 		private float FireballDamage = 10f;
@@ -132,6 +128,7 @@ namespace Moxy.Entities
 				}, new TimeSpan(0, 0, 0, 0, 200))
 
 			});
+
 			fireSound = Moxy.ContentManager.Load<SoundEffect> ("Sounds//Fire");
 		}
 	}

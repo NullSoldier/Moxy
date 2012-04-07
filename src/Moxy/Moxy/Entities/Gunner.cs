@@ -83,7 +83,7 @@ namespace Moxy.Entities
 			}
 			set
 			{
-				value.Gunner = this;
+				//value.Gunner = this;
 				fireballEmitter = value;
 				fireballEmitter.OnParticleMonsterCollision += new EventHandler<Events.GenericEventArgs<Monster>>(fireballEmitter_OnParticleMonsterCollision);
 			}
@@ -158,8 +158,8 @@ namespace Moxy.Entities
 				if (OnCastFireball != null)
 					OnCastFireball(this, fireEventArgs);
 
-				if (!fireEventArgs.Handled)
-					fireballEmitter.GenerateParticles(gameTime, direction);
+				//if (!fireEventArgs.Handled)
+					//fireballEmitter.GenerateParticles(gameTime, direction);
 			}
 		}
 

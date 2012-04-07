@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,6 +10,12 @@ namespace Moxy.Entities
 	public class ArcanaPlayer
 		: Entity
 	{
+		public ArcanaPlayer()
+		{
+			ParticleManagers = new List<ParticleManager>();
+			CollisionRadius = 32;
+		}
+
 		public event EventHandler OnDeath;
 		public event EventHandler<PlayerMovementEventArgs> OnMovement;
 
@@ -27,6 +34,7 @@ namespace Moxy.Entities
 		public bool AIControlled;
 		public bool MovementDisabled;
 		public float Speed;
+		public List<ParticleManager> ParticleManagers;
 
 		public void Damage (float amount)
 		{
@@ -53,6 +61,7 @@ namespace Moxy.Entities
 
 			Light.Location = Location + new Vector2 (32, 32);
 			Collision = Helpers.CreateCenteredRectangle (Location, CollisionRadius, CollisionRadius);
+			CollisionCenter = Collision.Center.ToVector2();
 
 			if (needUpdateAnimation)
 				SetAnimation (animation);

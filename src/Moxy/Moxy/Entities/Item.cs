@@ -17,6 +17,8 @@ namespace Moxy.Entities
 			Light.Scale = 0.1f;
 		}
 
+		public event EventHandler<GenericEventArgs<ArcanaPlayer>> OnPickup;
+
 		public Vector2 Location;
 		public Texture2D Texture;
 		public Rectangle Bounds;
@@ -51,20 +53,18 @@ namespace Moxy.Entities
 			}
 		}
 
-		public void CheckCollision(Player player)
+		public void CheckCollide (ArcanaPlayer player)
 		{
 			if (Vector2.Distance(CollisionCenter, player.CollisionCenter) < (CollisionRadius + player.CollisionRadius))
 			{
 				if (OnPlayerCollision(player))
 				{
-					OnPickup(this, new GenericEventArgs<Player>(player));
+					OnPickup (this, new GenericEventArgs<ArcanaPlayer> (player));
 				}
 			}
 		}
 
-		public abstract bool OnPlayerCollision(Player p);
-
-		public event EventHandler<GenericEventArgs<Player>> OnPickup;
+		public abstract bool OnPlayerCollision (ArcanaPlayer p);
 	}
 
 	public enum ItemID

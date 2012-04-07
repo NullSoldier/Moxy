@@ -72,13 +72,13 @@ namespace Moxy.GameStates
 					if (RedEnergyBar != null)
 					{
 						batch.DrawString(scorefont, "Score", new Vector2(10, 0), Color.Purple);
-						batch.DrawString(scorefont, OwningState.Team1Score.ToString(), new Vector2(10, 40), Color.Purple);
+						//batch.DrawString(scorefont, OwningState.Team1Score.ToString(), new Vector2(10, 40), Color.Purple);
 					}
 
 					if (BlueEnergyBar != null)
 					{
 						batch.DrawString(scorefont, "Score", new Vector2(630, 0), Color.Purple);
-						batch.DrawString(scorefont, OwningState.Team2Score.ToString(), new Vector2(630, 40), Color.Purple);
+						//batch.DrawString(scorefont, OwningState.Team2Score.ToString(), new Vector2(630, 40), Color.Purple);
 					}
 				}
 			}
