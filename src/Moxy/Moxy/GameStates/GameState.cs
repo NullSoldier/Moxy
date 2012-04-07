@@ -243,7 +243,7 @@ namespace Moxy.GameStates
 		public BigBadBoss boss;
 		private float MaxPlayerDistance = 1000;
 		private FireballEmitter FireballEmitter;
-		private List<ArcanaPlayer> players;
+		public List<ArcanaPlayer> players;
 		public DynamicCamera camera;
 		private MapRoot map;
 		private Texture2D lightTexture;
@@ -359,12 +359,7 @@ namespace Moxy.GameStates
 			players.Clear();
 			monsters.Clear();
 
-			uiOverlay.ActivePlayers.Clear();
-			uiOverlay.StatusBars.Clear();
-			uiOverlay.RedEnergyBar = null;
-			uiOverlay.RedSkillBar = null;
-			uiOverlay.RedRuneBar = null;
-			uiOverlay.BlueEnergyBar = null;
+			uiOverlay.Load();
 
 			boss = null;
 			Moxy.CurrentLevelIndex = -1;

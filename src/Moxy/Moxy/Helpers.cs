@@ -3,12 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Moxy
 {
 	public static class Helpers
 	{
+		public static Texture2D Pixel
+		{
+			get 
+			{ 
+				var pixel = new Texture2D(Moxy.Graphics, 1, 1, false, SurfaceFormat.Color); 
+				pixel.SetData(new[] { Color.White });
+				return pixel;
+			}
+		}
+
 		public static int Clamp(int value, int min, int max)
 		{
 			if (value < min)

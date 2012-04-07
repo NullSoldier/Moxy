@@ -146,6 +146,8 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="Interface\CharacterFrame.cs" />
     <Compile Include="Interface\CharacterHolder.cs" />
+    <Compile Include="Interface\PlayerInfoBlock.cs" />
+    <Compile Include="Interface\PlayerInfoFrame.cs" />
     <Compile Include="Levels\BaseLevel.cs" />
     <Compile Include="Levels\LevelFive.cs" />
     <Compile Include="Levels\LevelFour.cs" />
