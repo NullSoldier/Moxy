@@ -106,8 +106,8 @@ namespace Moxy
 		{
 			if (EnableCollision)
 			{
-				var transX = (int)Math.Round(X/TileDimensions.Width);
-				var transY = (int)Math.Round(Y / TileDimensions.Height);
+				var transX = (int) Math.Round(X/TileDimensions.Width) - 1;
+				var transY = (int) Math.Round(Y/TileDimensions.Height) - 1;
 				if (transX >= Dimensions.Width || transX < 0 || transY < 0 || transY >= Dimensions.Height)
 					return false;
 				else

@@ -58,7 +58,9 @@ namespace Moxy.Entities
 				OnDeath (this, null);
 
 			Light.Location = Location + new Vector2 (32, 32);
-			Collision = Helpers.CreateCenteredRectangle(Location + new Vector2(-4, -4), CollisionRadius, CollisionRadius);
+			Collision = Helpers.CreateCenteredRectangle(Location + new Vector2(16, 16)*moveVector,
+			                                            CollisionRadius
+														, CollisionRadius);
 
 			if (needUpdateAnimation)
 				SetAnimation (animation);
@@ -76,7 +78,7 @@ namespace Moxy.Entities
 
 		private void HandleInput (GameTime gameTime)
 		{
-			Vector2 moveVector = Moxy.CurrentPadStates[PadIndex].ThumbSticks.Left
+			moveVector = Moxy.CurrentPadStates[PadIndex].ThumbSticks.Left
 				.SafelyNormalize ()
 				.NegateY ();
 
@@ -121,6 +123,7 @@ namespace Moxy.Entities
 		protected string animation;
 		private Vector2 lastMovement;
 		protected bool needUpdateAnimation;
+		private Vector2 moveVector;
 
 		private void SetAnimation (string animation)
 		{
