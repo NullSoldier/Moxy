@@ -9,8 +9,6 @@ namespace Moxy.Entities
 {
 	public abstract class Entity
 	{
-		public float Health;
-		public float MaxHealth = 100;
 		public Vector2 Location;
 		public Rectangle Collision;
 		public Vector2 CollisionCenter;

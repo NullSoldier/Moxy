@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Moxy.GameStates;
 using Moxy.Interface;
-using Moxy.Skills;
 using Microsoft.Xna.Framework.Input;
 
 namespace Moxy.GameStates

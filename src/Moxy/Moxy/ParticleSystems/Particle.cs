@@ -34,7 +34,7 @@ namespace Moxy
 		public Color Color;
 		public float Time;
 		public float TimePassed;
-		public Player Target;
+		public ArcanaPlayer Target;
 		public Vector2 EndLocation;
 		public Light Light;
 

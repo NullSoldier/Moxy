@@ -26,14 +26,9 @@ namespace Moxy.Entities
 			fireballEmitter.OnParticleMonsterCollision += fireballEmitter_OnParticleMonsterCollision;
 			ParticleManagers.Add (fireballEmitter);
 
-			Health = 100;
-			MaxHealth = 100;
-			Mana = 500;
-			MaxMana = 500;
+			Health = MaxHealth = 100;
+			Energy = MaxEnergy = 500;
 		}
-
-		public float Mana;
-		public float MaxMana;
 
 		public override void Update (GameTime gameTime)
 		{
@@ -49,7 +44,7 @@ namespace Moxy.Entities
 
 			AttackTimeElapsed += gameTime.ElapsedGameTime;
 
-			if (currentPadState.ThumbSticks.Right != Vector2.Zero && AttackTimeElapsed > AttackCooldown && Mana >= 10)
+			if (currentPadState.ThumbSticks.Right != Vector2.Zero && AttackTimeElapsed > AttackCooldown && Energy >= 10)
 			{
 				var lookVector = Vector2.Normalize(currentPadState.ThumbSticks.Right);
 				lookVector.Y = -lookVector.Y;
@@ -67,7 +62,7 @@ namespace Moxy.Entities
 			fireSound.Play (fireVolume, firePitch, 0f);
 
 			fireballEmitter.GenerateParticles (gameTime, this, lookVector);
-			Mana -= 10;
+			Energy -= 10;
 		}
 
 		private void fireballEmitter_OnParticleMonsterCollision (object sender, Events.GenericEventArgs<Monster> e)
