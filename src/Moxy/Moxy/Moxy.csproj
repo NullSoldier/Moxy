@@ -160,6 +160,7 @@
     <Compile Include="Map\MapBuilder.cs" />
     <Compile Include="Map\MapLayer.cs" />
     <Compile Include="Map\MapRoot.cs" />
+    <Compile Include="Map\MapSerializer.cs" />
     <Compile Include="Map\TileMap.cs" />
     <Compile Include="Map\TileMap.Editor.cs" />
     <Compile Include="Moxy.cs" />

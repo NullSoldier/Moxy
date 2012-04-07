@@ -79,7 +79,10 @@ namespace Moxy.Entities
 				OnDeath(this, null);
 
 			CollisionCenter = Location;
-			Collision = new Rectangle((int)CollisionCenter.X, (int)CollisionCenter.Y, 1, 1);
+			Collision.X = (int)CollisionCenter.X;
+			Collision.Y = (int)CollisionCenter.Y;
+			Collision.Width = 1;
+			Collision.Height = 1;
 			CollisionRadius = 32;
 			Collision.Inflate((int)CollisionRadius, (int)CollisionRadius);
 		}

@@ -9,6 +9,12 @@ namespace Moxy.Entities
 	public class ArcanaPlayer
 		: Entity
 	{
+		public ArcanaPlayer()
+		{
+			CollisionRadius = 32;
+
+		}
+
 		public event EventHandler OnDeath;
 		public event EventHandler<PlayerMovementEventArgs> OnMovement;
 
@@ -52,7 +58,7 @@ namespace Moxy.Entities
 				OnDeath (this, null);
 
 			Light.Location = Location + new Vector2 (32, 32);
-			Collision = Helpers.CreateCenteredRectangle (Location, CollisionRadius, CollisionRadius);
+			Collision = Helpers.CreateCenteredRectangle(Location + new Vector2(-4, -4), CollisionRadius, CollisionRadius);
 
 			if (needUpdateAnimation)
 				SetAnimation (animation);
@@ -93,7 +99,7 @@ namespace Moxy.Entities
 			var playerMoveEventArgs = new PlayerMovementEventArgs
 			{
 				CurrentLocation = Location,
-				NewLocation = Location + moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds,
+				NewLocation = Location +(moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds),
 				Player = this,
 				Handled = false
 			};
@@ -101,8 +107,8 @@ namespace Moxy.Entities
 			if (OnMovement != null)
 				OnMovement (this, playerMoveEventArgs);
 
-			base.Location += !playerMoveEventArgs.Handled
-				? moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds
+			base.Location = !playerMoveEventArgs.Handled
+				? Location + moveVector * Speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds
 				: playerMoveEventArgs.NewLocation;
 
 			if (moveVector.Length () != 0)

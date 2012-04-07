@@ -64,7 +64,7 @@ namespace Moxy
 
 		public static Rectangle CreateCenteredRectangle(Vector2 location, int width, int height)
 		{
-			Rectangle rect = new Rectangle((int)location.X, (int)location.Y, 1, 1);
+			Rectangle rect = new Rectangle((int)location.X , (int)location.Y, 1, 1);
 			rect.Inflate (width, height);
 
 			return rect;

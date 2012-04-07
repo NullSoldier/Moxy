@@ -11,8 +11,8 @@ namespace Moxy.Entities
 	{
 		private static readonly TimeSpan DefaultTimeSpan = new TimeSpan(0, 0, 0, 0, 500);
 
-		public readonly bool Looping = true;
-		public readonly TimeSpan FrameRate;
+		public bool Looping = true;
+		public TimeSpan FrameRate;
 		public readonly string Name;
 		public readonly Rectangle[] Sources;
 		public int CurrentSource;
@@ -60,6 +60,12 @@ namespace Moxy.Entities
 		{
 			if (currentAnimation != null)
 				playAnimation(gameTime);
+		}
+
+		public Animation GetAnimation(string Name)
+		{
+			Animation animation = null;
+			return animation;
 		}
 
 		private void playAnimation(GameTime gameTime)

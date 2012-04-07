@@ -237,6 +237,7 @@ namespace Moxy.GameStates
 				players[i].Location = map.PlayerSpawns[i];
 
 			isLoaded = true;
+			map.EnableCollision = true;
 			Moxy.StateManager.Push(uiOverlay);
 		}
 
@@ -245,7 +246,7 @@ namespace Moxy.GameStates
 		private FireballEmitter FireballEmitter;
 		public List<ArcanaPlayer> players;
 		public DynamicCamera camera;
-		private MapRoot map;
+		public MapRoot map;
 		private Texture2D lightTexture;
 		private Texture2D texture;
 		private Texture2D radiusTexture;
@@ -384,6 +385,7 @@ namespace Moxy.GameStates
 				lights.Add (player.Light);
 				camera.ViewTargets.Add (player);
 			}
+		
 
 			//uiOverlay.ActivePlayers = players;
 		}
@@ -404,6 +406,15 @@ namespace Moxy.GameStates
 
 		private void Player_OnMovement (object sender, PlayerMovementEventArgs e)
 		{
+			var collisionRect = e.Player.Collision;
+			collisionRect.X = (int) e.NewLocation.X;
+			collisionRect.Y = (int) e.NewLocation.Y;
+
+			if (map.CheckCollision(collisionRect))
+			{
+				e.Handled = true;
+				e.NewLocation = e.CurrentLocation;
+			}
 			// TODO: Add distance limiting
 			// TODO: Add collision here
 		}
@@ -416,6 +427,7 @@ namespace Moxy.GameStates
 
 			map = new MapRoot(128, 128, 64, 64, Moxy.ContentManager.Load<Texture2D>("tileset"), camera);
 			map = Moxy.Maps[0].Build ();
+			map.EnableCollision = false;
 		
 
 			texture = new Texture2D (Moxy.Graphics, 1, 1);
