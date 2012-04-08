@@ -97,14 +97,19 @@ namespace Moxy
 			return rec;
 		}
 
-		public bool CheckCollision(int X, int Y)
+		public bool CheckCollision(int X, int Y, bool PreTrans)
 		{
 			if (EnableCollision)
 			{
-				var transX = (int) Math.Round(X/TileDimensions.Width) - 1;
-				var transY = (int) Math.Round(Y/TileDimensions.Height) - 1;
-				if (transX >= Dimensions.Width || transX < 0 || transY < 0 || transY >= Dimensions.Height)
-					return false;
+				var transX = X;
+				var transY = Y;
+				if (!PreTrans)
+				{
+					transX = (int) Math.Floor(X/TileDimensions.Width);
+					transY = (int) Math.Floor(Y/TileDimensions.Height);
+				}
+				if ((transX >= Dimensions.Width || transX < 0 || transY < 0 || transY >= Dimensions.Height))
+					return true;
 				else
 					return ((int)Layers[(int)MapLayerType.Collision].Tiles[transX, transY]) != 0;
 			}
@@ -115,7 +120,7 @@ namespace Moxy
 
 		public bool CheckCollision(Point P)
 		{
-			return CheckCollision(P.X, P.Y);
+			return CheckCollision(P.X, P.Y, false);
 		}
 
 		public bool CheckCollision(Vector2 V)
@@ -125,11 +130,22 @@ namespace Moxy
 
 		public bool CheckCollision(Rectangle R)
 		{
+			var transL = (int) Math.Floor(R.Left / TileDimensions.Width);
+			var transR = (int) Math.Floor(R.Right / TileDimensions.Width);
+			var transT = (int) Math.Floor(R.Top / TileDimensions.Height);
+			var transB = (int) Math.Floor(R.Bottom / TileDimensions.Height);
 			var failed = false;
-			for(var x = R.Left; x < R.Right && !failed; x += (int)TileDimensions.Width)
-				for(var y = R.Top; y < R.Bottom; y += (int)TileDimensions.Height)
+
+			transL = (int)MathHelper.Clamp(transL, 1, transL);
+			transR = (int)MathHelper.Clamp(transR, 1, transR);
+			transB = (int)MathHelper.Clamp(transB, 1, transB);
+			transT = (int)MathHelper.Clamp(transT, 1, transT);
+			
+
+			for(var x = transL; x <= transR && !failed; x++)
+				for(var y = transT; y <= transB; y++)
 				{
-					failed = CheckCollision(x, y);
+					failed = CheckCollision(x, y, true);
 					if (failed)
 						break;
 				}
@@ -148,7 +164,7 @@ namespace Moxy
 			{
 				for (var x = 0; x < xTiles; x++)
 				{
-					Boundings[(int)(x + (y * xTiles))] = new Rectangle((int)(x * TileDimensions.Width), (int)(y * TileDimensions.Height), (int)TileDimensions.Width, (int)TileDimensions.Height);
+					Boundings[(x + (y * xTiles))] = new Rectangle((int)(x * TileDimensions.Width), (int)(y * TileDimensions.Height), (int)TileDimensions.Width, (int)TileDimensions.Height);
 				}
 			}
 		}

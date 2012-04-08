@@ -13,9 +13,12 @@ namespace Moxy
 		public static Texture2D Pixel
 		{
 			get 
-			{ 
-				var pixel = new Texture2D(Moxy.Graphics, 1, 1, false, SurfaceFormat.Color); 
-				pixel.SetData(new[] { Color.White });
+			{
+				if (pixel == null)
+				{
+					pixel = new Texture2D(Moxy.Graphics, 1, 1, false, SurfaceFormat.Color);
+					pixel.SetData(new[] {Color.White});
+				}
 				return pixel;
 			}
 		}
@@ -64,7 +67,7 @@ namespace Moxy
 
 		public static Rectangle CreateCenteredRectangle(Vector2 location, int width, int height)
 		{
-			Rectangle rect = new Rectangle((int)location.X , (int)location.Y, 1, 1);
+			Rectangle rect = new Rectangle((int)location.X , (int)location.Y, 0, 0);
 			rect.Inflate (width, height);
 
 			return rect;
@@ -84,5 +87,7 @@ namespace Moxy
 		{
 			return self.NextDouble () < 0.5 ? 0 : 1;
 		}
+
+		private static Texture2D pixel;
 	}
 }
