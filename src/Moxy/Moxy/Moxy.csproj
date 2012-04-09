@@ -136,6 +136,7 @@
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\ITransition.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
+    <Compile Include="GameStates\MapSerailizationOverlay.cs" />
     <Compile Include="GameStates\MapState.cs" />
     <Compile Include="GameStates\RealMenuState.cs" />
     <Compile Include="GameStates\TilePickerOverlay.cs" />

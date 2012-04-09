@@ -13,7 +13,7 @@ namespace Moxy.Map
 	{
 		public override MapRoot Build()
 		{
-			MapRoot map = new MapRoot (128, 128, 64, 64, Moxy.ContentManager.Load<Texture2D> ("fantasytileset"), ((GameState)Moxy.StateManager["Game"]).camera);
+			MapRoot map = new MapRoot (128, 128, 64, 64, new [] { "fantasytileset" }, ((GameState)Moxy.StateManager["Game"]).camera);
 			map.AmbientColor = new Color (0, 0, 0, 0);
 			map.BackgroundTexture = Moxy.ContentManager.Load<Texture2D> ("background");
 

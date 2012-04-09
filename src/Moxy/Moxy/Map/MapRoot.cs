@@ -10,17 +10,31 @@ namespace Moxy
 {
 	public class MapRoot
 	{
-		public MapRoot(int Width, int Height, int TileWidth, int TileHeight, Texture2D texture, DynamicCamera Camera)
+		public MapRoot(int Width, int Height, int TileWidth, int TileHeight, string[] TextureNames, DynamicCamera Camera)
 		{
 			Layers = new MapLayer[3];
 			Dimensions = new Size(Width, Height);
 			TileDimensions = new Size(TileWidth, TileHeight);
 			CollidableID = new HashSet<int> ();
 			EnableCollision = false;
-			Texture = texture;
 			ViewCamera = Camera;
+			this.TextureNames = DefaultTextureNames;
 
-			CreateBoundings ();
+			if(TextureNames.Length == 1)
+			{
+				this.TextureNames[0] = TextureNames[0];
+				this.TextureNames[1] = TextureNames[0];
+			}
+			else if(TextureNames.Length == 2)
+			{
+				this.TextureNames[0] = TextureNames[0];
+				this.TextureNames[1] = TextureNames[1];
+			}
+			else
+			{
+				this.TextureNames = TextureNames;
+			}
+
 			CreateLayers();
 			CreateSpawns();
 			CreateLights();
@@ -31,17 +45,24 @@ namespace Moxy
 			throw new NotImplementedException();
 		}
 	
-		public readonly Texture2D Texture;
 		public readonly MapLayer[] Layers;
 		public readonly Size Dimensions;
 		public readonly Size TileDimensions;
 		public readonly HashSet<int> CollidableID;
+		public readonly string[] TextureNames;
+		public readonly static string[] DefaultTextureNames = new[]
+		                                                      	{
+		                                                      		"UnknownTexture",
+																	"UnknownTexture",
+																	"Collision_TileSet",
+		                                                      	};
 
 		public bool EnableCollision;
 		public Texture2D BackgroundTexture;
 		public DynamicCamera ViewCamera;
 		public Color AmbientColor;
-		public Rectangle[] Boundings;
+
+		public Rectangle TileDrawBounds;
 
 		public Vector2 LocationOffset;
 		public Vector2[] PlayerSpawns;
@@ -60,18 +81,17 @@ namespace Moxy
 		public void Draw(SpriteBatch batch)
 		{
 			TilesDrawn = 0;
-			Rectangle bounds;
 			if(ViewCamera == null)
 			{
-				bounds = new Rectangle(0, 0, (int)Dimensions.Width, (int)Dimensions.Height);
+				TileDrawBounds = new Rectangle(0, 0, (int)Dimensions.Width, (int)Dimensions.Height);
 			}
 			else
 			{
-				bounds = BuildCullingRectangle();
+				TileDrawBounds = BuildCullingRectangle();
 			}
 
-			Layers[(int)MapLayerType.Base].Draw (batch, bounds);
-			Layers[(int)MapLayerType.Decal].Draw (batch, bounds);
+			Layers[(int)MapLayerType.Base].Draw(batch, TileDrawBounds);
+			Layers[(int)MapLayerType.Decal].Draw(batch, TileDrawBounds);
 			//Layers[(int)MapLayerType.Collision].Draw(batch);
 		}
 
@@ -154,12 +174,12 @@ namespace Moxy
 
 
 
-		private void CreateBoundings()
+		public Rectangle[] CreateBoundings(Texture2D Texture)
 		{
 			var xTiles = (int)(Texture.Width / TileDimensions.Width);
 			var yTiles = (int)(Texture.Height / TileDimensions.Height);
 
-			Boundings = new Rectangle[xTiles * yTiles];
+			var Boundings = new Rectangle[xTiles * yTiles];
 			for (var y = 0; y < yTiles; y++)
 			{
 				for (var x = 0; x < xTiles; x++)
@@ -167,13 +187,14 @@ namespace Moxy
 					Boundings[(x + (y * xTiles))] = new Rectangle((int)(x * TileDimensions.Width), (int)(y * TileDimensions.Height), (int)TileDimensions.Width, (int)TileDimensions.Height);
 				}
 			}
+			return Boundings;
 		}
 
 		private void CreateLayers()
 		{
-			Layers[(int)MapLayerType.Base] = new MapLayer(this, MapLayerType.Base);
-			Layers[(int)MapLayerType.Collision] = new MapLayer(this, MapLayerType.Collision);
-			Layers[(int)MapLayerType.Decal] = new MapLayer(this, MapLayerType.Decal);
+			Layers[(int)MapLayerType.Base] = new MapLayer(this, MapLayerType.Base, TextureNames[(int)MapLayerType.Base]);
+			Layers[(int)MapLayerType.Decal] = new MapLayer(this, MapLayerType.Decal, TextureNames[(int)MapLayerType.Decal]);
+			Layers[(int)MapLayerType.Collision] = new MapLayer(this, MapLayerType.Collision, TextureNames[(int)MapLayerType.Collision]);
 		}
 
 		private void CreateSpawns()

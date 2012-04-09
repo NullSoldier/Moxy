@@ -12,7 +12,7 @@ namespace Moxy.Map
 	{
 		public override MapRoot Build()
 		{
-			MapRoot map = new MapRoot (128, 128, 64, 64, Moxy.ContentManager.Load<Texture2D> ("oryxtileset"), ((GameState)Moxy.StateManager["Game"]).camera);
+			MapRoot map = new MapRoot (128, 128, 64, 64, new []{ "oryxtileset" }, ((GameState)Moxy.StateManager["Game"]).camera);
 
 			return map;
 		}

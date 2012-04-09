@@ -10,16 +10,22 @@ namespace Moxy
 {
 	public class MapLayer
 	{
-		public MapLayer(MapRoot Parent, MapLayerType Type)
+		public MapLayer(MapRoot Parent, MapLayerType Type, string TextureName)
 		{
 			LayerType = Type;
 			this.Parent = Parent;
 			Tiles = new uint[(int)Parent.Dimensions.Width, (int)Parent.Dimensions.Height];
-
+			this.TextureName = TextureName;
+			LayerTexture = Moxy.ContentManager.Load<Texture2D>(TextureName);
+			LayerBounds = Parent.CreateBoundings(LayerTexture);
 		}
 
 		public readonly MapRoot Parent;
+		public readonly Texture2D LayerTexture;
+		public readonly Rectangle[] LayerBounds;
 		public readonly MapLayerType LayerType;
+		public readonly string TextureName;
+
 		public uint[,] Tiles;
 
 		public void Draw(SpriteBatch batch, Rectangle bounds)
@@ -32,7 +38,7 @@ namespace Moxy
 				{
 					if (Tiles[x, y] != 0)
 					{
-						batch.Draw(Parent.Texture, drawLocation, Parent.Boundings[Tiles[x, y]], Color.White);
+						batch.Draw(LayerTexture, drawLocation, LayerBounds[Tiles[x, y]], Color.White);
 						Parent.TilesDrawn++;
 					}
 					drawLocation.Y += (int)Parent.TileDimensions.Height;

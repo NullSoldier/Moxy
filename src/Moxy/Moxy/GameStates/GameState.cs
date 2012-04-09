@@ -417,7 +417,7 @@ namespace Moxy.GameStates
 			camera.MinimumSize = new Size (800, 600);
 			camera.UseBounds = true;
 
-			map = new MapRoot(128, 128, 64, 64, Moxy.ContentManager.Load<Texture2D>("tileset"), camera);
+			map = new MapRoot(128, 128, 64, 64, new [] { "tileset" }, camera);
 			map = Moxy.Maps[0].Build ();
 			map.EnableCollision = false;
 		

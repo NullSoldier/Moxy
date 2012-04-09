@@ -36,11 +36,12 @@ namespace Moxy.GameStates
 				mapState.IsFocused = true;
 			}
 
+			currentLayer = map.Layers[(int)mapState.CurrentLayer];
 			MouseState mouse = Mouse.GetState ();
 
 			if (mouse.LeftButton == ButtonState.Pressed)
 			{
-				int tilesWide = (int)(map.Texture.Width / map.TileDimensions.Width);
+				int tilesWide = (int)(currentLayer.LayerTexture.Width / map.TileDimensions.Width);
 				int x = (int)((mouse.X - tileDisplayOffset.X) / (map.TileDimensions.Width * scale));
 				int y = (int)((mouse.Y - tileDisplayOffset.Y) / (map.TileDimensions.Height * scale));
 
@@ -50,8 +51,8 @@ namespace Moxy.GameStates
 
 		public override void Draw (SpriteBatch batch)
 		{
-			int tilesWide = (int)(map.Texture.Width / map.TileDimensions.Width);
-			int tilesHigh = (int)(map.Texture.Height / map.TileDimensions.Height);
+			int tilesWide = (int)(currentLayer.LayerTexture.Width / map.TileDimensions.Width);
+			int tilesHigh = (int)(currentLayer.LayerTexture.Height / map.TileDimensions.Height);
 
 			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 			batch.Draw (backgroundTexture, new Rectangle (0, 0, Moxy.ScreenWidth, Moxy.ScreenHeight), null, Color.Black);
@@ -63,12 +64,12 @@ namespace Moxy.GameStates
 			{
 				for (int y = 0; y < tilesHigh; y++)
 				{
-					int tileID = (y * tilesWide) + x;
-					Vector2 tileLocation = new Vector2(x * (map.TileDimensions.Width * scale), y * (map.TileDimensions.Height * scale))
+					var tileID = (y * tilesWide) + x;
+					var tileLocation = new Vector2(x * (map.TileDimensions.Width * scale), y * (map.TileDimensions.Height * scale))
 						+ tileDisplayOffset;
 
 					// Draw the tile at it's respective location
-					batch.Draw (map.Texture, tileLocation, map.Boundings[tileID], Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
+					batch.Draw (currentLayer.LayerTexture, tileLocation, currentLayer.LayerBounds[tileID], Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 1f);
 
 					// Highlight if it's currently selected
 					if (tileID == mapState.currentTileID)
@@ -82,12 +83,14 @@ namespace Moxy.GameStates
 		public override void OnFocus()
 		{
 			map = mapState.Map;
-			float scalex = (float)Moxy.ScreenWidth / (float)map.Texture.Width;
-			float scaley = (float)Moxy.ScreenHeight / (float)map.Texture.Height;
+			currentLayer = map.Layers[(int)mapState.CurrentLayer];
+			float scalex = (float)Moxy.ScreenWidth / (float)currentLayer.LayerTexture.Width;
+			float scaley = (float)Moxy.ScreenHeight / (float)currentLayer.LayerTexture.Height;
 			scale = Math.Min(scalex, scaley);
 
 		}
 
+		private MapLayer currentLayer;
 		private MapRoot map;
 		private MapState mapState;
 		private float scale = 0.4f;

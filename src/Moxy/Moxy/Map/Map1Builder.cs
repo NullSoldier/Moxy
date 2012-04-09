@@ -14,7 +14,7 @@ namespace Moxy
 	{
 		public override MapRoot Build()
 		{
-			MapRoot map = new MapRoot (64, 64, 64, 64, Moxy.ContentManager.Load<Texture2D> ("tileset"), ((GameState)Moxy.StateManager["Game"]).camera);
+			MapRoot map = new MapRoot (64, 64, 64, 64, new [] {"tileset"}, ((GameState)Moxy.StateManager["Game"]).camera);
 			map.AmbientColor = new Color (1, 1, 1, 1);
 
 			// Load lights
