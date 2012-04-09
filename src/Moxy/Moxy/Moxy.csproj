@@ -155,6 +155,7 @@
     <Compile Include="Light.cs" />
     <Compile Include="Map\Map1Builder.cs" />
     <Compile Include="Map\Map2Builder.cs" />
+    <Compile Include="Map\Map3Builder.cs" />
     <Compile Include="Map\MapBuilder.cs" />
     <Compile Include="Map\MapLayer.cs" />
     <Compile Include="Map\MapRoot.cs" />

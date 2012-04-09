@@ -15,9 +15,7 @@ namespace Moxy.GameStates
 	{
 		public MapState()
 			: base("MapState", isOverlay:false, acceptsInput:true)
-		{
-
-			
+		{	
 		}
 	
 		public override void Update(GameTime gameTime)
@@ -37,21 +35,11 @@ namespace Moxy.GameStates
 
 				if (currentTool == EditorTool.PlaceTiles)
 				{
-					int tileID = currentTileID;
-					if (WasKeyPressed (state, Keys.Right))
-						tileID++;
-					else if (WasKeyPressed (state, Keys.Left))
-						tileID--;
+					if (enableTileHelper)
+						UpdateTileHelper (state);
 
-					if (tileID < 0)
-						tileID = Map.Boundings.Length + tileID;
-
-					currentTileID = tileID % Map.Boundings.Length;
-
-					if (mouseState.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
-						startPlacing = true;
-					if (mouseState.LeftButton == ButtonState.Released && oldMouse.LeftButton == ButtonState.Pressed)
-						startPlacing = false;
+					if (mouseState.LeftButton == ButtonState.Pressed)
+						SetTileAtPoint (new Vector2 (mouseState.X, mouseState.Y), currentTileID);
 					if (WasKeyPressed (state, Keys.NumPad1))
 						currentLayer = MapLayerType.Base;
 					if (WasKeyPressed (state, Keys.NumPad2))
@@ -61,9 +49,6 @@ namespace Moxy.GameStates
 
 					if (WasKeyPressed (state, Keys.F5))
 						ExportMapData();
-
-					if (startPlacing)
-						SetTileAtPoint (new Vector2 (mouseState.X, mouseState.Y), currentTileID);
 				}
 
 				if (Moxy.CurrentKeyboard.IsKeyDown (Keys.Tab))
@@ -113,20 +98,8 @@ namespace Moxy.GameStates
 
 			if (drawUI)
 			{
-				// Render tile helper at top
-				batch.Draw (texture, new Rectangle (0, 0, 800, 70), Color.DarkGray);
-				int startIndex = Helpers.LowerClamp (currentTileID - 5, 0);
-				//int endIndex = (int)MathHelper.Min(currentTileID + 10, )
-
-				for (int i = startIndex; i < startIndex + 10; i++)
-				{
-					int modifier = i - (startIndex + 5);
-					batch.Draw (Map.Texture, new Vector2 (368 + (modifier * 64), 2), Map.Boundings[i % Map.Boundings.Length],
-					            Color.White);
-
-					if (i == currentTileID)
-						batch.Draw (highlightTexture, new Vector2 (368 + (modifier * 64), 2), Color.White);
-				}
+				if (enableTileHelper)
+					DrawTileHelper(batch);
 
 				batch.DrawString (font, "Tile At Cursor: " + TileAtCursor.ToString(), new Vector2 (10, 80), Color.Red);
 				batch.DrawString (font, "Current TileID: " + currentTileID, new Vector2 (10, 100), Color.Red);
@@ -146,7 +119,7 @@ namespace Moxy.GameStates
 			Camera.MinimumSize = new Size (800, 600);
 			Camera.Position = new Vector2 (0, 0);
 
-			MapBuilder builder = new Map2Builder ();
+			MapBuilder builder = new Map3Builder ();
 			Map = builder.Build ();
 			Map.ViewCamera = Camera;
 
@@ -161,7 +134,6 @@ namespace Moxy.GameStates
 		public override void OnLostFocus()
 		{
 			drawUI = false;
-			startPlacing = false;
 			IsFocused = false;
 		}
 
@@ -178,11 +150,11 @@ namespace Moxy.GameStates
 		private SpriteFont font;
 		private Texture2D texture;
 		private Texture2D bgtexture;
-		private bool startPlacing;
 
 		private Vector2 TileAtCursor;
 		private Vector2 WorldAtCursor;
 		private bool drawUI;
+		private bool enableTileHelper = false;
 
 		private void HandleCameraControls(KeyboardState state, GameTime gameTime)
 		{
@@ -251,6 +223,38 @@ namespace Moxy.GameStates
 				string code = b.ToString();
 				if (code != null)
 					code = code;
+			}
+		}
+
+		private void UpdateTileHelper (KeyboardState state)
+		{
+			int tileID = currentTileID;
+			if (WasKeyPressed (state, Keys.Right))
+				tileID++;
+			else if (WasKeyPressed (state, Keys.Left))
+				tileID--;
+
+			if (tileID < 0)
+				tileID = Map.Boundings.Length + tileID;
+
+			currentTileID = tileID % Map.Boundings.Length;
+		}
+
+		private void DrawTileHelper (SpriteBatch batch)
+		{
+			// Render tile helper at top
+			batch.Draw (texture, new Rectangle (0, 0, 800, 70), Color.DarkGray);
+			int startIndex = Helpers.LowerClamp (currentTileID - 5, 0);
+			//int endIndex = (int)MathHelper.Min(currentTileID + 10, )
+
+			for (int i = startIndex; i < startIndex + 10; i++)
+			{
+				int modifier = i - (startIndex + 5);
+				batch.Draw (Map.Texture, new Vector2 (368 + (modifier * 64), 2), Map.Boundings[i % Map.Boundings.Length],
+					        Color.White);
+
+				if (i == currentTileID)
+					batch.Draw (highlightTexture, new Vector2 (368 + (modifier * 64), 2), Color.White);
 			}
 		}
 

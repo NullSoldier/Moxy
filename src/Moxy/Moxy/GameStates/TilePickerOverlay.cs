@@ -82,6 +82,10 @@ namespace Moxy.GameStates
 		public override void OnFocus()
 		{
 			map = mapState.Map;
+			float scalex = (float)Moxy.ScreenWidth / (float)map.Texture.Width;
+			float scaley = (float)Moxy.ScreenHeight / (float)map.Texture.Height;
+			scale = Math.Min(scalex, scaley);
+
 		}
 
 		private MapRoot map;
